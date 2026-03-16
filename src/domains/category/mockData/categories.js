@@ -61,12 +61,6 @@ export const mockCategories = [
     ],
   },
   {
-    id: 7,
-    name: "Đồ cũ",
-    slug: "do-cu",
-    subcategories: [],
-  },
-  {
     id: 8,
     name: "Phụ kiện",
     slug: "phu-kien",

@@ -45,10 +45,6 @@ function HomePage() {
 
                 <ProductSection title="TOP GIMBAL" />
 
-                <PromoBanner image={hangCuImage} />
-
-                <ProductSection title="TOP ĐỒ CŨ" />
-
                 <ReviewSection />
 
                 <StoreSection />
