@@ -1,0 +1,42 @@
+/* Admin-scoped styles - only affects /admin routes */
+/* Scoped wrapper: .AdminComponent */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Scoped styles for admin area only - only used by Sidebar component */
+.AdminComponent .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  /* 12px */
+  padding: 0.625rem 0.75rem;
+  /* py-2.5 px-3 */
+  color: #374151;
+  /* text-gray-700 */
+  border-radius: 0.5rem;
+  /* rounded-lg */
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.AdminComponent .nav-link:hover {
+  background-color: #f3f4f6;
+  /* bg-gray-100 */
+  color: #111827;
+  /* text-gray-900 */
+}
+
+.AdminComponent .nav-link-active {
+  background-color: #eff6ff;
+  /* bg-primary-50 */
+  color: #1e40af;
+  /* text-primary-700 */
+  border-right: 2px solid #1e40af;
+  /* border-r-2 border-primary-500 */
+}
+
+/* Shadow utility for sidebar - scoped to admin */
+.AdminComponent .shadow-sidebar {
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}

@@ -4,7 +4,6 @@ import FlashSale from "@/apps/customer/features/home/components/FlashSale";
 import ProductSection from "@/apps/customer/features/home/components/ProductSection";
 import ReviewSection from "@/apps/customer/features/home/components/ReviewSection";
 import StoreSection from "@/apps/customer/features/home/components/StoreSection";
-import NewsSection from "@/apps/customer/features/home/components/NewsSection";
 import thuCuDoiMoiImage from "@/assets/thu-cu-doi-moi.png";
 import hangCuImage from "@/assets/hang-cu-gia-chat.png";
 import mayAnhImage from "@/assets/may-anh-chuyen-nghiep.png";
@@ -49,7 +48,6 @@ function HomePage() {
 
                 <StoreSection />
 
-                {/* <NewsSection /> */}
             </div>
         </div>
     );

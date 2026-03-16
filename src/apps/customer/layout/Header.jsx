@@ -1,18 +1,32 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "@/domains/cart/context/CartContext";
+import { LoginModal } from "@/public/auth";
 import logo from "@/assets/logo.jpg";
 
 function Header() {
   const navigate = useNavigate();
   const { itemCount } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     }
+  };
+
+  const handleLogin = async (formData) => {
+    // TODO: Implement actual login logic here
+    console.log("Login data:", formData);
+
+    // Example: Call your API
+    // const response = await authService.login(formData);
+    // Handle response, redirect, etc.
+
+    // Close modal after successful login
+    // setIsLoginModalOpen(false);
   };
 
   return (
@@ -48,7 +62,12 @@ function Header() {
             HỆ THỐNG CỬA HÀNG
           </Link>
 
-          <button className="btn btn-primary">ĐĂNG NHẬP</button>
+          <button
+            onClick={() => setIsLoginModalOpen(true)}
+            className="btn btn-primary"
+          >
+            ĐĂNG NHẬP
+          </button>
 
           <Link
             to="/cart"
@@ -63,6 +82,13 @@ function Header() {
           </Link>
         </div>
       </div>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLogin={handleLogin}
+      />
     </div>
   );
 }
