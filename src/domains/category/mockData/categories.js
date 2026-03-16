@@ -2,8 +2,8 @@ export const mockCategories = [
   {
     id: 1,
     name: "Máy ảnh",
-    description: "Professional DSLR cameras for photography",
-    imageUrl: "/images/categories/dslr.jpg",
+    description: "Camera for photography",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2022/12/canon-eos-r5-1-280x280.jpg",
     productCount: 15,
     slug: "may-anh",
     subcategories: [
@@ -17,8 +17,8 @@ export const mockCategories = [
   {
     id: 2,
     name: "Ống kính",
-    description: "Modern mirrorless camera systems",
-    imageUrl: "/images/categories/mirrorless.jpg",
+    description: "Lens for camera",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2024/06/sigma-18-50mm-f28-fujifilm-x-1-280x280.jpg",
     productCount: 12,
     slug: "ong-kinh",
     subcategories: [
@@ -30,8 +30,8 @@ export const mockCategories = [
   {
     id: 3,
     name: "Gimbal",
-    description: "Compact and easy to use cameras",
-    imageUrl: "/images/categories/compact.jpg",
+    description: "Gimbal for camera",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2024/04/gimbal-dji-rs-4-pro-chinh-hang-2-280x280.jpg",
     productCount: 8,
     slug: "gimbal",
     subcategories: [],
@@ -39,8 +39,8 @@ export const mockCategories = [
   {
     id: 4,
     name: "Camera hành động",
-    description: "Wide variety of camera lenses",
-    imageUrl: "/images/categories/lenses.jpg",
+    description: "Camera for action",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2025/11/dji-action-6-anhsp-1-scaled-280x280.jpg",
     productCount: 25,
     slug: "camera-hanh-dong",
     subcategories: [
@@ -51,8 +51,8 @@ export const mockCategories = [
   {
     id: 5,
     name: "Micro",
-    description: "Camera accessories and gear",
-    imageUrl: "/images/categories/accessories.jpg",
+    description: "Microphone for camera",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2025/08/dji-mic-3-djistore-e1756366467443-280x280.jpg",
     productCount: 40,
     slug: "micro",
     subcategories: [
@@ -63,6 +63,9 @@ export const mockCategories = [
   {
     id: 8,
     name: "Phụ kiện",
+    description: "Camera accessories and gear",
+    imageUrl: "https://bncamera.com/wp-content/uploads/2025/12/anh-anh-muc-phu-kien-may-anh-280x280.png",
+    productCount: 40,
     slug: "phu-kien",
     subcategories: [
       { id: 81, name: "Pin, Sạc", slug: "pin-sac" },

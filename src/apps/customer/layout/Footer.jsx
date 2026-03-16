@@ -14,43 +14,37 @@ function Footer() {
         {
             id: 1,
             name: "MÁY ẢNH",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2022/12/canon-eos-r5-1-280x280.jpg",
             slug: "may-anh"
         },
         {
             id: 2,
             name: "ỐNG KÍNH",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2024/06/sigma-18-50mm-f28-fujifilm-x-1-280x280.jpg",
             slug: "ong-kinh"
         },
         {
             id: 3,
             name: "CAMERA HÀNH ĐỘNG",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2025/11/dji-action-6-anhsp-1-scaled-280x280.jpg",
             slug: "camera-hanh-dong"
         },
         {
             id: 4,
             name: "GIMBAL CHỐNG RUNG",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2024/04/gimbal-dji-rs-4-pro-chinh-hang-2-280x280.jpg",
             slug: "gimbal-chong-rung"
         },
         {
             id: 5,
             name: "MICRO",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2025/08/dji-mic-3-djistore-e1756366467443-280x280.jpg",
             slug: "micro"
         },
         {
             id: 6,
-            name: "ĐỒ CŨ",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
-            slug: "do-cu"
-        },
-        {
-            id: 7,
             name: "PHỤ KIỆN MÁY ẢNH",
-            image: "https://product.hstatic.net/200000409445/product/20_a5fafddf48c6423eab730f4bdee6b252_master.jpg",
+            image: "https://bncamera.com/wp-content/uploads/2025/12/anh-anh-muc-phu-kien-may-anh-280x280.png",
             slug: "phu-kien-may-anh"
         }
     ];
@@ -82,7 +76,7 @@ function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div className="text-white">
                             <h2 className="text-2xl font-bold mb-3 text-white">
-                                Đăng ký nhận các thông báo mới nhất từ BNCamera
+                                Đăng ký nhận các thông báo mới nhất từ ASTER Production
                             </h2>
                             <p className="text-white/90">
                                 Nhận các thông báo mới nhất từ chúng tôi như chương trình khuyến mãi, ưu đãi đặc biệt, sản phẩm mới, kinh nghiệm chụp ảnh – quay phim, cùng nhiều thông tin hữu ích dành cho người yêu nhiếp ảnh và sáng tạo nội dung.
@@ -111,9 +105,9 @@ function Footer() {
 
                 {/* Product Categories Grid */}
                 <div className="mb-10">
-                    {/* First row: 5 categories */}
-                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mb-4">
-                        {categories.slice(0, 7).map((category) => (
+                    {/* First row: 6 categories */}
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+                        {categories.slice(0, 6).map((category) => (
                             <a
                                 key={category.id}
                                 href={`/category/${category.slug}`}
@@ -155,10 +149,10 @@ function Footer() {
             <div className="container mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 border-t">
                 {/* About */}
                 <div>
-                    <h3 className="font-semibold mb-3">Giới thiệu BNCamera</h3>
+                    <h3 className="font-semibold mb-3">Giới thiệu ASTER Production</h3>
                     <p className="text-sm text-gray-600">
-                        BNCamera bán buôn và bán lẻ các sản phẩm ngành ảnh:
-                        Máy ảnh, Ống kính, Gimbal, Flycam, Action Camera...
+                        ASTER Production bán buôn và bán lẻ các sản phẩm ngành ảnh:
+                        Máy ảnh, Ống kính, Gimbal, Action Camera, Microphone, Phụ kiện...
                     </p>
                 </div>
 
@@ -187,7 +181,7 @@ function Footer() {
             </div>
 
             <div className="text-center text-sm text-gray-500 border-t py-4">
-                © 2026 BNCamera
+                © 2026 ASTER Production
             </div>
         </footer>
     );
