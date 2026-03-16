@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/domains/cart/context/CartContext";
 import { LoginModal } from "@/public/auth";
+import authService from "@/core/auth/authService";
 import logo from "@/assets/logo.jpg";
 
 function Header() {
@@ -9,6 +10,14 @@ function Header() {
   const { itemCount } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -18,15 +27,38 @@ function Header() {
   };
 
   const handleLogin = async (formData) => {
-    // TODO: Implement actual login logic here
-    console.log("Login data:", formData);
+    try {
+      const result = await authService.login(formData.username, formData.password);
 
-    // Example: Call your API
-    // const response = await authService.login(formData);
-    // Handle response, redirect, etc.
+      if (result.success) {
+        // Update user state
+        const currentUser = authService.getCurrentUser();
+        setUser(currentUser);
 
-    // Close modal after successful login
-    // setIsLoginModalOpen(false);
+        // Close modal
+        setIsLoginModalOpen(false);
+
+        // Use window.location to force full page reload
+        // This ensures AuthContext is properly initialized
+        if (authService.isAdmin()) {
+          window.location.href = '/admin/dashboard';
+        } else {
+          window.location.reload();
+        }
+      } else {
+        throw new Error(result.message || 'Đăng nhập thất bại');
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setUser(null);
+    setShowUserMenu(false);
+    // Refresh page
+    window.location.reload();
   };
 
   return (
@@ -62,12 +94,50 @@ function Header() {
             HỆ THỐNG CỬA HÀNG
           </Link>
 
-          <button
-            onClick={() => setIsLoginModalOpen(true)}
-            className="btn btn-primary"
-          >
-            ĐĂNG NHẬP
-          </button>
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <i className="fa-solid fa-user"></i>
+                {user.fullName || user.email}
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
+                  <div className="p-3 border-b">
+                    <p className="text-sm font-semibold">{user.fullName}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                  {user.role === 'admin' && (
+                    <Link
+                      to="/admin/dashboard"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <i className="fa-solid fa-gauge mr-2"></i>
+                      Quản trị
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                  >
+                    <i className="fa-solid fa-right-from-bracket mr-2"></i>
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsLoginModalOpen(true)}
+              className="btn btn-primary"
+            >
+              ĐĂNG NHẬP
+            </button>
+          )}
 
           <Link
             to="/cart"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import orderService from "@/domains/order/services/order.service";
+import { formatCurrency } from "@/utils/currencyHelpers";
 
 function AdminOrderPage() {
   const [orders, setOrders] = useState([]);
@@ -7,6 +8,8 @@ function AdminOrderPage() {
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -15,11 +18,11 @@ function AdminOrderPage() {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      // In a real app, would get all orders, not just from one user
-      const data = await orderService.getUserOrders("all");
+      const data = await orderService.getAllOrders();
       setOrders(data);
     } catch (err) {
       console.error("Error loading orders:", err);
+      alert("Không thể tải danh sách đơn hàng!");
     } finally {
       setLoading(false);
     }
@@ -42,12 +45,250 @@ function AdminOrderPage() {
     }
   };
 
+  const handlePrintOrder = () => {
+    if (!selectedOrder) return;
+    
+    // Create print window
+    const printWindow = window.open('', '_blank');
+    const order = selectedOrder;
+    
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Đơn hàng ${order.orderNumber}</title>
+          <style>
+            @media print {
+              @page { margin: 1cm; }
+              body { font-family: Arial, sans-serif; }
+            }
+            body {
+              font-family: Arial, sans-serif;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid #000;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 24px;
+            }
+            .order-info {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              margin-bottom: 30px;
+            }
+            .section {
+              margin-bottom: 20px;
+            }
+            .section h3 {
+              border-bottom: 1px solid #ddd;
+              padding-bottom: 5px;
+              margin-bottom: 10px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            table th, table td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+            table th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+            }
+            .total {
+              text-align: right;
+              font-size: 18px;
+              font-weight: bold;
+              margin-top: 20px;
+            }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              font-size: 12px;
+              color: #666;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>HÓA ĐƠN BÁN HÀNG</h1>
+            <p>Mã đơn: <strong>${order.orderNumber}</strong></p>
+            <p>Ngày: ${new Date(order.createdAt).toLocaleString("vi-VN")}</p>
+          </div>
+          
+          <div class="order-info">
+            <div class="section">
+              <h3>Thông tin khách hàng</h3>
+              <p><strong>${order.shippingAddress.fullName}</strong></p>
+              <p>Email: ${order.email || order.shippingAddress.email || 'N/A'}</p>
+              <p>Điện thoại: ${order.shippingAddress.phone}</p>
+            </div>
+            <div class="section">
+              <h3>Địa chỉ giao hàng</h3>
+              <p>${order.shippingAddress.address}</p>
+              <p>${order.shippingAddress.city}, ${order.shippingAddress.state}</p>
+              <p>${order.shippingAddress.zipCode}, ${order.shippingAddress.country}</p>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h3>Chi tiết sản phẩm</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Sản phẩm</th>
+                  <th>Số lượng</th>
+                  <th>Đơn giá</th>
+                  <th>Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${order.items.map((item, idx) => `
+                  <tr>
+                    <td>${idx + 1}</td>
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td>${formatCurrency(item.price)}</td>
+                    <td>${formatCurrency(item.subtotal)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="section">
+            <table>
+              <tr>
+                <td><strong>Tạm tính:</strong></td>
+                <td style="text-align: right;">${formatCurrency(order.subtotal)}</td>
+              </tr>
+              <tr>
+                <td><strong>Phí vận chuyển:</strong></td>
+                <td style="text-align: right;">${formatCurrency(order.shippingFee)}</td>
+              </tr>
+              <tr>
+                <td><strong>Thuế:</strong></td>
+                <td style="text-align: right;">${formatCurrency(order.tax)}</td>
+              </tr>
+              <tr style="background-color: #f5f5f5;">
+                <td><strong>Tổng cộng:</strong></td>
+                <td style="text-align: right; font-size: 18px;"><strong>${formatCurrency(order.total)}</strong></td>
+              </tr>
+            </table>
+          </div>
+          
+          <div class="section">
+            <h3>Thông tin thanh toán</h3>
+            <p>Phương thức: <strong>${getPaymentMethodLabel(order.paymentMethod)}</strong></p>
+            <p>Trạng thái: <strong>${getStatusLabel(order.status)}</strong></p>
+          </div>
+          
+          <div class="footer">
+            <p>Cảm ơn quý khách đã mua hàng!</p>
+            <p>Mọi thắc mắc vui lòng liên hệ: support@example.com</p>
+          </div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  };
+
+  const getPaymentMethodLabel = (method) => {
+    const labels = {
+      cash_on_delivery: "Thanh toán khi nhận hàng",
+      credit_card: "Thẻ tín dụng",
+      debit_card: "Thẻ ghi nợ",
+      bank_transfer: "Chuyển khoản ngân hàng",
+    };
+    return labels[method] || method;
+  };
+
+  const handleSendEmail = async () => {
+    if (!selectedOrder) return;
+    
+    const email = selectedOrder.email || selectedOrder.shippingAddress?.email;
+    if (!email) {
+      alert("Không tìm thấy email của khách hàng!");
+      return;
+    }
+
+    if (!window.confirm(`Gửi email xác nhận đơn hàng đến ${email}?`)) {
+      return;
+    }
+
+    try {
+      setEmailSending(true);
+      
+      // Create email content
+      const emailSubject = `Xác nhận đơn hàng ${selectedOrder.orderNumber}`;
+      const emailBody = `
+Xin chào ${selectedOrder.shippingAddress.fullName},
+
+Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!
+
+Thông tin đơn hàng:
+- Mã đơn: ${selectedOrder.orderNumber}
+- Ngày đặt: ${new Date(selectedOrder.createdAt).toLocaleString("vi-VN")}
+- Trạng thái: ${getStatusLabel(selectedOrder.status)}
+- Tổng tiền: ${formatCurrency(selectedOrder.total)}
+
+Sản phẩm đã đặt:
+${selectedOrder.items.map((item, idx) => `${idx + 1}. ${item.productName} - SL: ${item.quantity} - ${formatCurrency(item.subtotal)}`).join('\n')}
+
+Địa chỉ giao hàng:
+${selectedOrder.shippingAddress.address}
+${selectedOrder.shippingAddress.city}, ${selectedOrder.shippingAddress.state}
+${selectedOrder.shippingAddress.zipCode}, ${selectedOrder.shippingAddress.country}
+
+Chúng tôi sẽ liên hệ với bạn sớm nhất có thể để xác nhận đơn hàng.
+
+Trân trọng,
+Đội ngũ Camera Online Store
+      `.trim();
+
+      // Use mailto link as fallback (or you can implement API call here)
+      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      
+      // For now, we'll use mailto. In production, you'd call an API endpoint
+      window.location.href = mailtoLink;
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      alert(`Email đã được mở trong ứng dụng email mặc định của bạn!\n\nTrong môi trường production, email sẽ được gửi tự động đến ${email}`);
+      
+      setShowEmailModal(false);
+    } catch (err) {
+      console.error("Error sending email:", err);
+      alert("Không thể gửi email. Vui lòng thử lại.");
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
   const filteredOrders = orders.filter((order) => {
     const matchesStatus = filter === "all" || order.status === filter;
+    const email = order.email || order.shippingAddress?.email || "";
     const matchesSearch = 
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.shippingAddress.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.shippingAddress.email.toLowerCase().includes(searchTerm.toLowerCase());
+      email.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
@@ -185,7 +426,7 @@ function AdminOrderPage() {
           <div className="text-center">
             <p className="text-sm opacity-90">Doanh thu</p>
             <p className="text-xl font-bold mt-1">
-              ${stats.revenue.toLocaleString()}
+              {formatCurrency(stats.revenue)}
             </p>
           </div>
         </div>
@@ -294,12 +535,12 @@ function AdminOrderPage() {
                             {order.shippingAddress.fullName}
                           </p>
                           <p className="text-xs text-gray-600">
-                            {order.shippingAddress.email}
+                            {order.email || order.shippingAddress?.email || "N/A"}
                           </p>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <p className="font-bold text-blue-600">
-                            ${order.total.toLocaleString()}
+                            {formatCurrency(order.total)}
                           </p>
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -376,9 +617,11 @@ function AdminOrderPage() {
                   {selectedOrder.shippingAddress.fullName}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {selectedOrder.shippingAddress.email}
+                  <i className="fa-solid fa-envelope mr-1"></i>
+                  {selectedOrder.email || selectedOrder.shippingAddress?.email || "N/A"}
                 </p>
                 <p className="text-sm text-gray-600">
+                  <i className="fa-solid fa-phone mr-1"></i>
                   {selectedOrder.shippingAddress.phone}
                 </p>
               </div>
@@ -410,7 +653,7 @@ function AdminOrderPage() {
                     <div key={idx} className="text-sm bg-gray-50 p-2 rounded">
                       <p className="font-semibold">{item.productName}</p>
                       <p className="text-gray-600">
-                        SL: {item.quantity} × ${item.price.toLocaleString()} = ${(item.quantity * item.price).toLocaleString()}
+                        SL: {item.quantity} × {formatCurrency(item.price)} = {formatCurrency(item.quantity * item.price)}
                       </p>
                     </div>
                   ))}
@@ -422,36 +665,53 @@ function AdminOrderPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tạm tính:</span>
                   <span className="font-medium">
-                    ${selectedOrder.subtotal.toLocaleString()}
+                    {formatCurrency(selectedOrder.subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Phí vận chuyển:</span>
                   <span className="font-medium">
-                    ${selectedOrder.shippingFee}
+                    {formatCurrency(selectedOrder.shippingFee)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Thuế:</span>
-                  <span className="font-medium">${selectedOrder.tax}</span>
+                  <span className="font-medium">{formatCurrency(selectedOrder.tax)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg pt-2 border-t">
                   <span>Tổng cộng:</span>
                   <span className="text-blue-600">
-                    ${selectedOrder.total.toLocaleString()}
+                    {formatCurrency(selectedOrder.total)}
                   </span>
                 </div>
               </div>
 
               {/* Actions */}
               <div className="mt-4 pt-4 border-t space-y-2">
-                <button className="w-full btn btn-primary text-sm">
+                <button
+                  onClick={handlePrintOrder}
+                  className="w-full btn btn-primary text-sm"
+                  disabled={!selectedOrder}
+                >
                   <i className="fa-solid fa-print mr-2"></i>
                   In đơn hàng
                 </button>
-                <button className="w-full btn btn-outline text-sm">
-                  <i className="fa-solid fa-envelope mr-2"></i>
-                  Gửi email cho khách
+                <button
+                  onClick={handleSendEmail}
+                  className="w-full btn btn-outline text-sm"
+                  disabled={!selectedOrder || emailSending}
+                >
+                  {emailSending ? (
+                    <>
+                      <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                      Đang gửi...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-envelope mr-2"></i>
+                      Gửi email cho khách
+                    </>
+                  )}
                 </button>
               </div>
             </div>

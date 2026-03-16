@@ -1,6 +1,17 @@
-import orderApi from "@/domains/order/api/order.api";
+import orderApi from "@/domains/order/api/orderApi";
 
 const orderService = {
+  // Admin: Get all orders
+  getAllOrders: async (filters = {}) => {
+    try {
+      const response = await orderApi.getAllOrders(filters);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
+  },
+
   // Get user orders
   getUserOrders: async (userId) => {
     try {

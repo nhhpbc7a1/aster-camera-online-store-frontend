@@ -1,98 +1,94 @@
-// Mock API layer - returns mock data initially
-// Later: replace with actual API calls
-import { mockProducts } from "@/domains/product/mockData/products";
-
-// Simulates API delay
-const apiDelay = () => new Promise((resolve) => setTimeout(resolve, 300));
+import apiClient, { handleApiError } from '@/core/api/apiClient';
 
 const productApi = {
   // Get all products
   getAllProducts: async (filters = {}) => {
-    await apiDelay();
-
-    let products = [...mockProducts];
-
-    if (filters.categoryId) {
-      products = products.filter((p) => p.categoryId === filters.categoryId);
+    try {
+      // For admin pages, fetch all products by setting a high limit
+      // Default limit=100 to show more products in admin panel
+      const params = {
+        limit: 100,
+        ...filters,
+      };
+      const response = await apiClient.get('/products', { params });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
     }
-
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      products = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchLower) ||
-          p.description.toLowerCase().includes(searchLower),
-      );
-    }
-
-    if (filters.minPrice !== undefined) {
-      products = products.filter((p) => p.price >= filters.minPrice);
-    }
-
-    if (filters.maxPrice !== undefined) {
-      products = products.filter((p) => p.price <= filters.maxPrice);
-    }
-
-    if (filters.isFlashSale) {
-      products = products.filter((p) => p.isFlashSale);
-    }
-
-    if (filters.isFeatured) {
-      products = products.filter((p) => p.isFeatured);
-    }
-
-    return {
-      data: products,
-      total: products.length,
-      page: filters.page || 1,
-      limit: filters.limit || 10,
-    };
   },
 
   // Get product by ID
   getProductById: async (productId) => {
-    await apiDelay();
-
-    const product = mockProducts.find((p) => p.id === productId);
-    if (!product) {
-      throw new Error(`Product with ID ${productId} not found`);
+    try {
+      const response = await apiClient.get(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
     }
-
-    return { data: product };
   },
 
   // Get related products
   getRelatedProducts: async (productId, limit = 4) => {
-    await apiDelay();
-
-    const product = mockProducts.find((p) => p.id === productId);
-    if (!product) {
-      throw new Error(`Product with ID ${productId} not found`);
+    try {
+      const response = await apiClient.get(`/products/${productId}/related`, {
+        params: { limit },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
     }
-
-    const related = mockProducts
-      .filter((p) => p.id !== productId && p.categoryId === product.categoryId)
-      .slice(0, limit);
-
-    return { data: related };
   },
 
   // Get featured products
   getFeaturedProducts: async (limit = 6) => {
-    await apiDelay();
-
-    const featured = mockProducts.filter((p) => p.isFeatured).slice(0, limit);
-
-    return { data: featured };
+    try {
+      const response = await apiClient.get('/products/featured', {
+        params: { limit },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 
   // Get flash sale products
   getFlashSaleProducts: async () => {
-    await apiDelay();
+    try {
+      const response = await apiClient.get('/products/flash-sale');
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
 
-    const flashSale = mockProducts.filter((p) => p.isFlashSale);
+  // Admin: Create product
+  createProduct: async (productData) => {
+    try {
+      const response = await apiClient.post('/products', productData);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
 
-    return { data: flashSale };
+  // Admin: Update product
+  updateProduct: async (productId, productData) => {
+    try {
+      const response = await apiClient.put(`/products/${productId}`, productData);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
+
+  // Admin: Delete product
+  deleteProduct: async (productId) => {
+    try {
+      const response = await apiClient.delete(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 };
 

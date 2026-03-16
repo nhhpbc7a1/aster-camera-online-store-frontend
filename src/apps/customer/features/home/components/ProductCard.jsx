@@ -1,4 +1,5 @@
 import { useCart } from "@/domains/cart/context/CartContext";
+import { formatCurrency } from "@/utils/currencyHelpers";
 
 function ProductCard({ product, showAddButton = false, showSelectButton = false }) {
   const { addToCart, loading } = useCart();
@@ -20,12 +21,6 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false 
     } catch (err) {
       console.error("Error adding to cart:", err);
     }
-  };
-
-  // Format price to Vietnamese dong format
-  const formatPrice = (price) => {
-    if (!price && price !== 0) return "";
-    return `${price.toLocaleString("vi-VN").replace(/,/g, ".")} ₫`;
   };
 
   return (
@@ -97,11 +92,11 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false 
             product.price &&
             product.salePrice < product.price && (
               <div className="text-sm text-gray-500 line-through">
-                {formatPrice(product.price)}
+                {formatCurrency(product.price)}
               </div>
             )}
           <div className="text-black font-semibold text-sm">
-            {formatPrice(product.salePrice || product.price)}
+            {formatCurrency(product.salePrice || product.price)}
           </div>
         </div>
 

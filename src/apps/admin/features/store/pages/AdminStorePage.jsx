@@ -1,160 +1,49 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import storeService from "@/domains/store/services/storeService";
 
 function AdminStorePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    phones: [""],
-    email: "",
-    hours: "",
-    latitude: 0,
-    longitude: 0,
-    featured: false,
-    description: "",
-    image: "",
-  });
+  const [searchTerm, setSearchTerm] = useState("");
 
+  // Reload stores when route changes (e.g., navigating back from form)
   useEffect(() => {
     loadStores();
-  }, []);
+  }, [location.pathname]);
 
   const loadStores = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with actual API call
-      const mockStores = [
-        {
-          id: 1,
-          name: "ASTER Production",
-          address: "202, Đường Lê Văn Việt, Phường 1, Quận 10, TP.HCM",
-          phones: ["0794352262"],
-          email: "asterproduction333@gmail.com",
-          hours: "8:00 AM - 9:00 PM",
-          latitude: 21.0285,
-          longitude: 105.7842,
-          featured: true,
-          description: "Cửa hàng chính, phục vụ toàn bộ TP.HCM",
-          image: "https://via.placeholder.com/400x300",
-        },
-      ];
-      setStores(mockStores);
+      const storesData = await storeService.getAllStores();
+      setStores(storesData);
     } catch (err) {
       console.error("Error loading stores:", err);
+      alert("Không thể tải danh sách cửa hàng");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handlePhoneChange = (index, value) => {
-    const newPhones = [...formData.phones];
-    newPhones[index] = value;
-    setFormData((prev) => ({ ...prev, phones: newPhones }));
-  };
-
-  const addPhoneField = () => {
-    setFormData((prev) => ({ ...prev, phones: [...prev.phones, ""] }));
-  };
-
-  const removePhoneField = (index) => {
-    const newPhones = formData.phones.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, phones: newPhones }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setFormData((prev) => ({
-          ...prev,
-          image: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        const updatedStores = stores.map((store) =>
-          store.id === editingId ? { ...formData, id: editingId } : store
-        );
-        setStores(updatedStores);
-        alert("Cửa hàng đã được cập nhật!");
-      } else {
-        const newStore = {
-          ...formData,
-          id: Math.max(...stores.map((s) => s.id), 0) + 1,
-        };
-        setStores([...stores, newStore]);
-        alert("Cửa hàng đã được thêm!");
-      }
-      handleResetForm();
-    } catch (err) {
-      console.error("Error saving store:", err);
-      alert("Không thể lưu cửa hàng");
-    }
-  };
-
-  const handleEditStore = (store) => {
-    setFormData({
-      name: store.name,
-      address: store.address,
-      phones: store.phones,
-      email: store.email,
-      hours: store.hours,
-      latitude: store.latitude,
-      longitude: store.longitude,
-      featured: store.featured,
-      description: store.description,
-      image: store.image,
-    });
-    setImagePreview(store.image);
-    setEditingId(store.id);
-    setShowForm(true);
-  };
-
-  const handleDeleteStore = (storeId) => {
+  const handleDeleteStore = async (storeId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa cửa hàng này?")) {
-      const updatedStores = stores.filter((store) => store.id !== storeId);
-      setStores(updatedStores);
-      alert("Cửa hàng đã được xóa!");
+      try {
+        await storeService.deleteStore(storeId);
+        alert("Cửa hàng đã được xóa!");
+        await loadStores();
+      } catch (err) {
+        console.error("Error deleting store:", err);
+        alert("Không thể xóa cửa hàng: " + (err.message || "Lỗi không xác định"));
+      }
     }
   };
 
-  const handleResetForm = () => {
-    setFormData({
-      name: "",
-      address: "",
-      phones: [""],
-      email: "",
-      hours: "",
-      latitude: 0,
-      longitude: 0,
-      featured: false,
-      description: "",
-      image: "",
-    });
-    setImagePreview(null);
-    setEditingId(null);
-    setShowForm(false);
-  };
+  const filteredStores = stores.filter((store) =>
+    store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    store.address.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -169,6 +58,7 @@ function AdminStorePage() {
 
   return (
     <div className="p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Quản lý Cửa hàng</h1>
@@ -176,7 +66,10 @@ function AdminStorePage() {
             Quản lý hệ thống cửa hàng ({stores.length})
           </p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn btn-primary">
+        <button
+          onClick={() => navigate("/admin/stores/add")}
+          className="btn btn-primary"
+        >
           <i className="fa-solid fa-plus mr-2"></i>
           Thêm Cửa hàng Mới
         </button>
@@ -225,239 +118,32 @@ function AdminStorePage() {
         </div>
       </div>
 
-      {showForm && (
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6 border">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">
-              {editingId ? "Chỉnh sửa Cửa hàng" : "Thêm Cửa hàng Mới"}
-            </h2>
-            <button
-              onClick={handleResetForm}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <i className="fa-solid fa-xmark text-xl"></i>
-            </button>
-          </div>
+      {/* Search */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6 border">
+        <label className="block text-sm font-semibold mb-2">
+          <i className="fa-solid fa-search mr-2"></i>
+          Tìm kiếm cửa hàng
+        </label>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Nhập tên hoặc địa chỉ cửa hàng..."
+          className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
+        />
+      </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Tên Cửa hàng *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="VD: ASTER Production"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="store@example.com"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold mb-2">
-                  Địa chỉ *
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="202, Đường Lê Văn Việt, Phường 1, Quận 10, TP.HCM"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Giờ mở cửa *
-                </label>
-                <input
-                  type="text"
-                  name="hours"
-                  value={formData.hours}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="8:00 AM - 9:00 PM"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Số điện thoại
-                </label>
-                {formData.phones.map((phone, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={phone}
-                      onChange={(e) => handlePhoneChange(index, e.target.value)}
-                      className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                      placeholder="0123456789"
-                    />
-                    {formData.phones.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removePhoneField(index)}
-                        className="px-3 py-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100"
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addPhoneField}
-                  className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                  <i className="fa-solid fa-plus mr-1"></i>
-                  Thêm số điện thoại
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Vĩ độ (Latitude)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleFormChange}
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="21.0285"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Kinh độ (Longitude)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="longitude"
-                  value={formData.longitude}
-                  onChange={handleFormChange}
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="105.7842"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold mb-2">
-                  Mô tả
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  rows="3"
-                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="Nhập mô tả về cửa hàng..."
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold mb-2">
-                  Hình ảnh Cửa hàng
-                </label>
-                <div className="flex items-start gap-4">
-                  <div className="flex-1">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="w-full border rounded-md px-3 py-2 text-sm"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Hoặc nhập URL hình ảnh
-                    </p>
-                    <input
-                      type="text"
-                      name="image"
-                      value={formData.image}
-                      onChange={handleFormChange}
-                      className="w-full border rounded-md px-3 py-2 mt-2 text-sm focus:outline-none focus:border-black"
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                  {(imagePreview || formData.image) && (
-                    <div className="w-32 h-32 border rounded-md overflow-hidden">
-                      <img
-                        src={imagePreview || formData.image}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="featured"
-                    checked={formData.featured}
-                    onChange={handleFormChange}
-                    className="w-5 h-5 mr-2 cursor-pointer"
-                  />
-                  <span className="text-sm font-semibold">
-                    <i className="fa-solid fa-star text-yellow-500 mr-1"></i>
-                    Đánh dấu là cửa hàng nổi bật
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-4 border-t">
-              <button type="submit" className="flex-1 btn btn-primary">
-                <i className="fa-solid fa-check mr-2"></i>
-                {editingId ? "Cập nhật Cửa hàng" : "Thêm Cửa hàng"}
-              </button>
-              <button
-                type="button"
-                onClick={handleResetForm}
-                className="flex-1 btn btn-outline"
-              >
-                <i className="fa-solid fa-xmark mr-2"></i>
-                Hủy bỏ
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
+      {/* Stores Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stores.length === 0 ? (
+        {filteredStores.length === 0 ? (
           <div className="col-span-full bg-white rounded-lg shadow p-12 text-center border">
             <i className="fa-solid fa-store-slash text-6xl text-gray-300 mb-4"></i>
-            <p className="text-gray-500">Chưa có cửa hàng nào</p>
+            <p className="text-gray-500">
+              {searchTerm ? "Không tìm thấy cửa hàng" : "Chưa có cửa hàng nào"}
+            </p>
           </div>
         ) : (
-          stores.map((store) => (
+          filteredStores.map((store) => (
             <div
               key={store.id}
               className="bg-white rounded-lg shadow overflow-hidden border hover:shadow-lg transition"
@@ -467,6 +153,9 @@ function AdminStorePage() {
                   src={store.image || "https://via.placeholder.com/400x300"}
                   alt={store.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/400x300";
+                  }}
                 />
               </div>
               <div className="p-4">
@@ -486,7 +175,7 @@ function AdminStorePage() {
                 </p>
                 <p className="text-sm text-gray-600 mb-2">
                   <i className="fa-solid fa-phone mr-1"></i>
-                  {store.phones.join(", ")}
+                  {store.phones?.join(", ") || "N/A"}
                 </p>
                 <p className="text-sm text-gray-600 mb-4">
                   <i className="fa-solid fa-envelope mr-1"></i>
@@ -499,7 +188,7 @@ function AdminStorePage() {
                 )}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleEditStore(store)}
+                    onClick={() => navigate(`/admin/stores/edit/${store.id}`)}
                     className="flex-1 btn btn-outline text-sm"
                   >
                     <i className="fa-solid fa-pen-to-square mr-1"></i>

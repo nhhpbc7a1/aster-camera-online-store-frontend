@@ -13,6 +13,7 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
     isAuthenticated,
     loading,
     userId: user?.userId,
+    userRole: user?.role,
     userRoles: user?.roles,
     pathname: location.pathname
   });
@@ -30,26 +31,34 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
     console.log('🛡️ [ProtectedRoute] ⛔ Not authenticated, redirecting to login');
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Check role-based access
   if (requiredRoles.length > 0) {
-    const userRolesRaw = user?.roles || [];
-    const userRoles = userRolesRaw.map((r) => String(r).toUpperCase());
+    // Support both 'role' (string) and 'roles' (array)
+    let userRoles = [];
+
+    // If user has 'role' as string, convert to array
+    if (user?.role && typeof user.role === 'string') {
+      userRoles = [user.role];
+    }
+
+    // If user has 'roles' as array, use it
+    if (user?.roles && Array.isArray(user.roles) && user.roles.length > 0) {
+      userRoles = user.roles;
+    }
+
+    const userRolesNormalized = userRoles.map((r) => String(r).toUpperCase());
     const required = requiredRoles.map((r) => String(r).toUpperCase());
 
-    console.log('🛡️ [ProtectedRoute] Role check:', { userRoles, required });
+    console.log('🛡️ [ProtectedRoute] Role check:', { userRolesNormalized, required });
 
     // Admin bypass: full access
-    if (!userRoles.includes('ADMIN')) {
-      const hasRequiredRole = required.some((role) => userRoles.includes(role));
+    if (!userRolesNormalized.includes('ADMIN')) {
+      const hasRequiredRole = required.some((role) => userRolesNormalized.includes(role));
       if (!hasRequiredRole) {
-        console.log('🛡️ [ProtectedRoute] ⛔ No required role, redirecting');
-        const lower = requiredRoles[0]?.toLowerCase();
-        if (lower === 'seller' || lower === 'supplier') {
-          return <Navigate to={`/customer/signup?role=${lower}`} replace />;
-        }
+        console.log('🛡️ [ProtectedRoute] ⛔ No required role, showing unauthorized');
         return <UnauthorizedAccess />;
       }
     }

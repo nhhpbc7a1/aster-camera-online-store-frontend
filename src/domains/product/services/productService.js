@@ -60,17 +60,50 @@ const productService = {
 
   // Search products
   searchProducts: async (searchTerm) => {
-    return this.getProducts({ search: searchTerm });
+    return productService.getProducts({ search: searchTerm });
   },
 
   // Filter products by price range
   getProductsByPriceRange: async (minPrice, maxPrice) => {
-    return this.getProducts({ minPrice, maxPrice });
+    return productService.getProducts({ minPrice, maxPrice });
   },
 
   // Get products by category
   getProductsByCategory: async (categoryId) => {
-    return this.getProducts({ categoryId });
+    return productService.getProducts({ categoryId });
+  },
+
+  // Create new product (Admin only)
+  createProduct: async (productData) => {
+    try {
+      const response = await productApi.createProduct(productData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
+    }
+  },
+
+  // Update product (Admin only)
+  updateProduct: async (productId, productData) => {
+    try {
+      const response = await productApi.updateProduct(productId, productData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  },
+
+  // Delete product (Admin only)
+  deleteProduct: async (productId) => {
+    try {
+      const response = await productApi.deleteProduct(productId);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      throw error;
+    }
   },
 };
 

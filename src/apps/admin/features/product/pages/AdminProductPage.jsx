@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import productService from "@/domains/product/services/productService";
 import categoryService from "@/domains/category/services/categoryService";
+import { getCategoryName } from "@/utils/categoryHelpers";
+import { formatCurrency } from "@/utils/currencyHelpers";
 
 function AdminProductPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Reload products when route changes (e.g., navigating back from form)
   useEffect(() => {
     loadProducts();
     loadCategories();
-  }, []);
+  }, [location.pathname]); // Re-run when pathname changes
 
   const loadProducts = async () => {
     try {
@@ -37,22 +43,34 @@ function AdminProductPage() {
     }
   };
 
-  const handleDeleteProduct = (productId) => {
+  const handleDeleteProduct = async (productId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-      const updatedProducts = products.filter((prod) => prod.id !== productId);
-      setProducts(updatedProducts);
-      alert("Sản phẩm đã được xóa!");
+      try {
+        await productService.deleteProduct(productId);
+        alert("Sản phẩm đã được xóa thành công!");
+        // Reload products list
+        await loadProducts();
+      } catch (err) {
+        console.error("Error deleting product:", err);
+        alert("Không thể xóa sản phẩm: " + (err.message || "Lỗi không xác định"));
+      }
     }
   };
 
-  const handleDuplicateProduct = (product) => {
-    const duplicated = {
-      ...product,
-      id: Math.max(...products.map((p) => p.id), 0) + 1,
-      name: `${product.name} (Copy)`,
-    };
-    setProducts([...products, duplicated]);
-    alert("Sản phẩm đã được sao chép!");
+  const handleDuplicateProduct = async (product) => {
+    try {
+      const duplicated = {
+        ...product,
+        id: undefined, // Remove id so backend creates new one
+        name: `${product.name} (Copy)`,
+      };
+      await productService.createProduct(duplicated);
+      alert("Sản phẩm đã được sao chép thành công!");
+      await loadProducts();
+    } catch (err) {
+      console.error("Error duplicating product:", err);
+      alert("Không thể sao chép sản phẩm: " + (err.message || "Lỗi không xác định"));
+    }
   };
 
   const filteredProducts = products.filter((product) => {
@@ -65,6 +83,57 @@ function AdminProductPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterCategory, searchTerm]);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push("...");
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push("...");
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
   const stats = {
     total: products.length,
     inStock: products.filter((p) => p.inStock).length,
@@ -72,6 +141,15 @@ function AdminProductPage() {
     totalValue: products.reduce((sum, p) => sum + p.price * p.quantity, 0),
     featured: products.filter((p) => p.isFeatured).length,
     flashSale: products.filter((p) => p.isFlashSale).length,
+  };
+
+  // Helper function to get subcategory name
+  const getSubcategoryName = (categoryId, subcategoryId) => {
+    if (!subcategoryId) return null;
+    const category = categories.find((cat) => cat.id === categoryId);
+    if (!category?.subcategories) return null;
+    const subcategory = category.subcategories.find((sub) => sub.id === subcategoryId);
+    return subcategory?.name || null;
   };
 
   if (loading) {
@@ -190,7 +268,7 @@ function AdminProductPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4 mb-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-semibold mb-2">
               <i className="fa-solid fa-search mr-2"></i>
@@ -224,11 +302,45 @@ function AdminProductPage() {
               ))}
             </select>
           </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">
+              <i className="fa-solid fa-list mr-2"></i>
+              Hiển thị mỗi trang
+            </label>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
+            >
+              <option value={5}>5 sản phẩm</option>
+              <option value={10}>10 sản phẩm</option>
+              <option value={20}>20 sản phẩm</option>
+              <option value={50}>50 sản phẩm</option>
+              <option value={100}>100 sản phẩm</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Products Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden border">
+        {/* Results Info */}
+        <div className="px-6 py-3 bg-gray-50 border-b">
+          <p className="text-sm text-gray-600">
+            Hiển thị <span className="font-semibold">{startIndex + 1}</span> -{" "}
+            <span className="font-semibold">
+              {Math.min(endIndex, filteredProducts.length)}
+            </span>{" "}
+            trong tổng số{" "}
+            <span className="font-semibold">{filteredProducts.length}</span> sản
+            phẩm
+          </p>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
@@ -267,7 +379,7 @@ function AdminProductPage() {
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product) => (
+                currentProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -306,20 +418,30 @@ function AdminProductPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {product.category || "N/A"}
-                      </span>
+                      <div>
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {getCategoryName(product.categoryId) || "N/A"}
+                        </span>
+                        {product.subcategoryId && getSubcategoryName(product.categoryId, product.subcategoryId) && (
+                          <div className="mt-1">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                              <i className="fa-solid fa-arrow-right mr-1"></i>
+                              {getSubcategoryName(product.categoryId, product.subcategoryId)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div>
                         <p className="font-semibold text-sm">
-                          {(product.salePrice || product.price).toLocaleString("vi-VN")}đ
+                          {formatCurrency(product.salePrice || product.price)}
                         </p>
                         {product.salePrice &&
                           product.salePrice < product.price && (
                             <>
                               <p className="text-xs text-gray-400 line-through">
-                                {product.price.toLocaleString("vi-VN")}đ
+                                {formatCurrency(product.price)}
                               </p>
                               <span className="inline-block mt-1 px-1.5 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded">
                                 -{product.discount}%
@@ -393,6 +515,102 @@ function AdminProductPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {filteredProducts.length > 0 && totalPages > 1 && (
+          <div className="px-6 py-4 bg-gray-50 border-t">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-sm text-gray-600">
+                Trang <span className="font-semibold">{currentPage}</span> /{" "}
+                <span className="font-semibold">{totalPages}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* First Page */}
+                <button
+                  onClick={() => goToPage(1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 text-sm font-medium border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition"
+                  title="Trang đầu"
+                >
+                  <i className="fa-solid fa-angles-left"></i>
+                </button>
+
+                {/* Previous Page */}
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 text-sm font-medium border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition"
+                  title="Trang trước"
+                >
+                  <i className="fa-solid fa-angle-left"></i>
+                </button>
+
+                {/* Page Numbers */}
+                <div className="hidden sm:flex items-center gap-2">
+                  {getPageNumbers().map((page, index) => (
+                    <React.Fragment key={index}>
+                      {page === "..." ? (
+                        <span className="px-3 py-2 text-sm text-gray-500">
+                          ...
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => goToPage(page)}
+                          className={`px-3 py-2 text-sm font-medium border rounded-md transition ${
+                            currentPage === page
+                              ? "bg-black text-white border-black"
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+
+                {/* Next Page */}
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 text-sm font-medium border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition"
+                  title="Trang sau"
+                >
+                  <i className="fa-solid fa-angle-right"></i>
+                </button>
+
+                {/* Last Page */}
+                <button
+                  onClick={() => goToPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 text-sm font-medium border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition"
+                  title="Trang cuối"
+                >
+                  <i className="fa-solid fa-angles-right"></i>
+                </button>
+              </div>
+
+              {/* Page Jump (Mobile) */}
+              <div className="sm:hidden flex items-center gap-2">
+                <span className="text-sm text-gray-600">Đến trang:</span>
+                <input
+                  type="number"
+                  min="1"
+                  max={totalPages}
+                  value={currentPage}
+                  onChange={(e) => {
+                    const page = parseInt(e.target.value);
+                    if (page >= 1 && page <= totalPages) {
+                      goToPage(page);
+                    }
+                  }}
+                  className="w-16 border rounded-md px-2 py-1 text-sm text-center focus:outline-none focus:border-black"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

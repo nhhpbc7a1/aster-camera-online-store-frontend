@@ -1,53 +1,53 @@
-import apiClient from "@/core/api/apiClient";
+import apiClient, { handleApiError } from '@/core/api/apiClient';
 
 const reviewApi = {
+  // Get all reviews
   getAllReviews: async (filters = {}) => {
     try {
-      const response = await apiClient.get("/reviews", { params: filters });
+      const response = await apiClient.get('/reviews', { params: filters });
       return response.data;
     } catch (error) {
-      console.error("Error fetching reviews:", error);
-      throw error;
+      throw handleApiError(error);
     }
   },
 
+  // Get review by ID
   getReviewById: async (reviewId) => {
     try {
       const response = await apiClient.get(`/reviews/${reviewId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching review:", error);
-      throw error;
+      throw handleApiError(error);
     }
   },
 
+  // Create review (public)
   createReview: async (reviewData) => {
     try {
-      const response = await apiClient.post("/reviews", reviewData);
+      const response = await apiClient.post('/reviews', reviewData);
       return response.data;
     } catch (error) {
-      console.error("Error creating review:", error);
-      throw error;
+      throw handleApiError(error);
     }
   },
 
+  // Admin: Update review
   updateReview: async (reviewId, reviewData) => {
     try {
       const response = await apiClient.put(`/reviews/${reviewId}`, reviewData);
       return response.data;
     } catch (error) {
-      console.error("Error updating review:", error);
-      throw error;
+      throw handleApiError(error);
     }
   },
 
+  // Admin: Delete review
   deleteReview: async (reviewId) => {
     try {
       const response = await apiClient.delete(`/reviews/${reviewId}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting review:", error);
-      throw error;
+      throw handleApiError(error);
     }
   },
 };

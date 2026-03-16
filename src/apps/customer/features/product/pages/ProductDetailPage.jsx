@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import productService from "@/domains/product/services/productService";
 import { useCart } from "@/domains/cart/context/CartContext";
+import { getCategoryName, getSubcategoryName } from "@/utils/categoryHelpers";
+import { formatCurrency } from "@/utils/currencyHelpers";
 
 function ProductDetailPage() {
   const { productId } = useParams();
@@ -81,14 +83,17 @@ function ProductDetailPage() {
   }
 
   // Breadcrumb items
+  const categoryName = getCategoryName(product.categoryId);
+  const subcategoryName = getSubcategoryName(product.categoryId, product.subcategoryId);
+
   const breadcrumbs = [
     { label: "Trang chủ", href: "/" },
-    product.category && {
-      label: product.category,
+    categoryName && {
+      label: categoryName,
       href: `/category/${product.categoryId}`,
     },
-    product.subcategory && {
-      label: product.subcategory,
+    subcategoryName && {
+      label: subcategoryName,
       href: `/category/${product.categoryId}/${product.subcategoryId}`,
     },
     { label: product.name, href: null },
@@ -130,14 +135,13 @@ function ProductDetailPage() {
             <img
               src={product.images?.[selectedImage] || product.image}
               alt={product.name}
-              className={`w-full h-full object-contain transition-transform duration-300 ${
-                isZooming ? "scale-200" : "scale-100"
-              }`}
+              className={`w-full h-full object-contain transition-transform duration-300 ${isZooming ? "scale-200" : "scale-100"
+                }`}
               style={
                 isZooming
                   ? {
-                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                    }
+                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  }
                   : {}
               }
             />
@@ -188,11 +192,10 @@ function ProductDetailPage() {
                   <button
                     key={thumbnailIndex + idx}
                     onClick={() => setSelectedImage(thumbnailIndex + idx)}
-                    className={`flex-1 border-2 rounded overflow-hidden relative group/thumb transition-all ${
-                      selectedImage === thumbnailIndex + idx
-                        ? "border-blue-600"
-                        : "border-gray-300"
-                    }`}
+                    className={`flex-1 border-2 rounded overflow-hidden relative group/thumb transition-all ${selectedImage === thumbnailIndex + idx
+                      ? "border-blue-600"
+                      : "border-gray-300"
+                      }`}
                   >
                     <img
                       src={img}
@@ -252,23 +255,22 @@ function ProductDetailPage() {
           </div>
 
           <div className="mb-6">
-            <p className="text-gray-600 text-lg">{product.description}</p>
+            <div
+              className="text-gray-600 text-lg prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </div>
 
           {/* Price */}
           <div className="mb-6">
             <div className="flex items-center gap-4">
               <span className="text-4xl font-bold text-black">
-                {product.salePrice
-                  ?.toLocaleString("vi-VN")
-                  .replace(/,/g, ".") ??
-                  product.price.toLocaleString("vi-VN").replace(/,/g, ".")}{" "}
-                ₫
+                {formatCurrency(product.salePrice || product.price)}
               </span>
               {product.salePrice && product.salePrice < product.price && (
                 <>
                   <span className="text-2xl text-gray-400 line-through">
-                    {product.price.toLocaleString("vi-VN").replace(/,/g, ".")} ₫
+                    {formatCurrency(product.price)}
                   </span>
                   <span className="bg-black-500 text-white px-3 py-1 rounded">
                     -{product.discount}%
@@ -320,13 +322,13 @@ function ProductDetailPage() {
               disabled={!product.inStock || cartLoading}
               className="btn btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {cartLoading ? "Adding..." : "Thêm vào giỏ hàng"}
+              {cartLoading ? "Thêm vào giỏ hàng..." : "Thêm vào giỏ hàng"}
             </button>
           </div>
 
           {addedToCart && (
             <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-              Product added to cart successfully!
+              Sản phẩm đã được thêm vào giỏ hàng thành công!
             </div>
           )}
         </div>
@@ -352,10 +354,7 @@ function ProductDetailPage() {
                   {p.name}
                 </h3>
                 <p className="text-blue-600 font-bold">
-                  {(p.salePrice || p.price)
-                    .toLocaleString("vi-VN")
-                    .replace(/,/g, ".")}{" "}
-                  ₫
+                  {formatCurrency(p.salePrice || p.price)}
                 </p>
               </a>
             ))}
@@ -373,9 +372,8 @@ function ProductDetailPage() {
               .map(([key, value], idx) => (
                 <div
                   key={key}
-                  className={`grid grid-cols-2 gap-4 p-4 ${
-                    idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  } border-b last:border-0`}
+                  className={`grid grid-cols-2 gap-4 p-4 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    } border-b last:border-0`}
                 >
                   <span className="font-medium text-gray-700">{key}</span>
                   <span className="text-gray-600">{value}</span>
@@ -405,8 +403,8 @@ function ProductDetailPage() {
             </div>
 
             {/* Short Description */}
-            <div className="mb-8 text-gray-700 leading-relaxed">
-              <p>{product.description}</p>
+            <div className="mb-8 text-gray-700 leading-relaxed prose max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: product.description }} />
             </div>
 
             {/* Table of Contents */}
@@ -445,9 +443,10 @@ function ProductDetailPage() {
                   <h3 className="text-xl font-semibold mb-4 text-gray-900">
                     {section.title}
                   </h3>
-                  <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {section.content}
-                  </div>
+                  <div
+                    className="text-gray-700 leading-relaxed prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: section.content }}
+                  />
                 </div>
               ))}
           </div>
@@ -504,10 +503,7 @@ function ProductDetailPage() {
                           {p.name}
                         </h4>
                         <p className="text-blue-600 font-bold text-sm">
-                          {(p.salePrice || p.price)
-                            .toLocaleString("vi-VN")
-                            .replace(/,/g, ".")}{" "}
-                          ₫
+                          {formatCurrency(p.salePrice || p.price)}
                         </p>
                       </div>
                     </a>
@@ -539,10 +535,7 @@ function ProductDetailPage() {
                   {p.name}
                 </h3>
                 <p className="text-blue-600 font-bold">
-                  {(p.salePrice || p.price)
-                    .toLocaleString("vi-VN")
-                    .replace(/,/g, ".")}{" "}
-                  ₫
+                  {formatCurrency(p.salePrice || p.price)}
                 </p>
               </a>
             ))}

@@ -1,0 +1,80 @@
+/* Simple WYSIWYG Editor Styles */
+
+.simple-editor-content:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Basic text formatting */
+.simple-editor-content {
+  line-height: 1.6;
+}
+
+.simple-editor-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content h4 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content p {
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content ul,
+.simple-editor-content ol {
+  margin-left: 2em;
+  margin-bottom: 0.5em;
+}
+
+.simple-editor-content li {
+  margin-bottom: 0.25em;
+}
+
+.simple-editor-content a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.simple-editor-content strong,
+.simple-editor-content b {
+  font-weight: bold;
+}
+
+.simple-editor-content em,
+.simple-editor-content i {
+  font-style: italic;
+}
+
+.simple-editor-content u {
+  text-decoration: underline;
+}
+
+.simple-editor-content code {
+  background-color: #f3f4f6;
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+  font-family: monospace;
+}

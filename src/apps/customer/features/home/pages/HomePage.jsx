@@ -4,8 +4,6 @@ import FlashSale from "@/apps/customer/features/home/components/FlashSale";
 import ProductSection from "@/apps/customer/features/home/components/ProductSection";
 import ReviewSection from "@/apps/customer/features/home/components/ReviewSection";
 import StoreSection from "@/apps/customer/features/home/components/StoreSection";
-import thuCuDoiMoiImage from "@/assets/thu-cu-doi-moi.png";
-import hangCuImage from "@/assets/hang-cu-gia-chat.png";
 import mayAnhImage from "@/assets/may-anh-chuyen-nghiep.png";
 import ongKinhImage from "@/assets/ong-kinh-may-anh.png";
 import cameraImage from "@/assets/camera-hanh-dong.png";
@@ -20,7 +18,6 @@ function HomePage() {
 
 
             <div className="container mx-auto ">
-                <PromoBanner image={thuCuDoiMoiImage} />
 
                 <FlashSale />
 

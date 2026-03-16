@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/domains/cart/context/CartContext";
+import { getCategoryName } from "@/utils/categoryHelpers";
+import { formatCurrency } from "@/utils/currencyHelpers";
 import orderService from "@/domains/order/services/order.service";
 
 function CartPage() {
@@ -23,12 +25,6 @@ function CartPage() {
     country: "Việt Nam",
     paymentMethod: "cash_on_delivery",
   });
-
-  // Format price to Vietnamese Dong
-  const formatPrice = (price) => {
-    if (!price && price !== 0) return "0 ₫";
-    return `${price.toLocaleString("vi-VN").replace(/,/g, ".")} ₫`;
-  };
 
   const handleRemoveItem = async (cartItemId) => {
     try {
@@ -109,8 +105,17 @@ function CartPage() {
       const tax = Math.round(cart.total * 0.1);
       const totalPrice = cart.total + shippingFee + tax;
 
+      // Map payment method to match backend enum
+      const paymentMethodMap = {
+        cash_on_delivery: "cash_on_delivery",
+        credit_card: "credit_card",
+        bank_transfer: "bank_transfer",
+        paypal: "credit_card", // PayPal maps to credit_card in backend
+      };
+
       const orderData = {
-        userId: "guest-user",
+        // userId is optional for guest orders
+        email: formData.email, // Store customer email
         items: cart.items.map((item) => ({
           productId: item.productId,
           productName: item.product.name,
@@ -124,17 +129,15 @@ function CartPage() {
         total: totalPrice,
         shippingAddress: {
           fullName: formData.fullName,
-          email: formData.email,
           phone: formData.phone,
+          email: formData.email, // Also include in shipping address
           address: formData.address,
           city: formData.city,
           state: formData.state,
           zipCode: formData.zipCode,
           country: formData.country,
         },
-        paymentMethod: formData.paymentMethod,
-        paymentStatus:
-          formData.paymentMethod === "cash_on_delivery" ? "pending" : "pending",
+        paymentMethod: paymentMethodMap[formData.paymentMethod] || "cash_on_delivery",
       };
 
       const newOrder = await orderService.createOrder(orderData);
@@ -142,8 +145,17 @@ function CartPage() {
       setSuccessOrder(newOrder);
       setStep("success");
     } catch (err) {
-      setError(err.message || "Đặt hàng thất bại. Vui lòng thử lại.");
       console.error("Error placing order:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Đặt hàng thất bại. Vui lòng thử lại.";
+      setError(errorMessage);
+
+      // Log full error for debugging
+      if (err.response?.data) {
+        console.error("Full error response:", err.response.data);
+      }
     } finally {
       setPlacing(false);
     }
@@ -176,7 +188,9 @@ function CartPage() {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="text-6xl mb-4">✅</div>
+          <div className="text-6xl mb-4">
+            <i className="fa-solid fa-check text-green-600"></i>
+          </div>
           <h1 className="text-3xl font-bold text-green-600 mb-4">
             Đặt Hàng Thành Công!
           </h1>
@@ -192,12 +206,13 @@ function CartPage() {
               Cảm ơn bạn đã mua hàng! Email xác nhận đã được gửi đến{" "}
               <span className="font-semibold">{formData.email}</span>
             </p>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-gray-600 text-sm mb-10">
               Vui lòng kiểm tra email để xem chi tiết đơn hàng và thông tin theo dõi.
             </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
-              <p className="text-sm text-yellow-800">
-                📧 Chi tiết đơn hàng đã được gửi đến email của bạn. Vui lòng kiểm tra thư mục spam nếu không thấy.
+            <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mt-10">
+              <p className="text-sm text-yellow-800 mt-4">
+                <i className="fa-solid fa-envelope text-yellow-800 mr-2"></i>
+                Chi tiết đơn hàng đã được gửi đến email của bạn. Vui lòng kiểm tra thư mục spam nếu không thấy.
               </p>
             </div>
           </div>
@@ -264,13 +279,13 @@ function CartPage() {
                           <div>
                             <p className="font-semibold">{item.product.name}</p>
                             <p className="text-sm text-gray-600">
-                              {item.product.category}
+                              {getCategoryName(item.product.categoryId)}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        {formatPrice(item.price)}
+                        {formatCurrency(item.price)}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center border rounded w-24">
@@ -308,7 +323,7 @@ function CartPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right font-semibold">
-                        {formatPrice(item.subtotal)}
+                        {formatCurrency(item.subtotal)}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <button
@@ -350,22 +365,22 @@ function CartPage() {
               <div className="space-y-3 mb-6 pb-6 border-b">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tạm Tính</span>
-                  <span className="font-medium">{formatPrice(cart.total)}</span>
+                  <span className="font-medium">{formatCurrency(cart.total)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Phí Vận Chuyển</span>
-                  <span className="font-medium">{formatPrice(shippingFee)}</span>
+                  <span className="font-medium">{formatCurrency(shippingFee)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Thuế (10%)</span>
-                  <span className="font-medium">{formatPrice(tax)}</span>
+                  <span className="font-medium">{formatCurrency(tax)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-center mb-6 text-lg font-semibold">
                 <span>Tổng Cộng</span>
                 <span className="text-2xl text-black">
-                  {formatPrice(totalPrice)}
+                  {formatCurrency(totalPrice)}
                 </span>
               </div>
 
@@ -518,21 +533,21 @@ function CartPage() {
                       label: "Thanh Toán Khi Nhận Hàng",
                       desc: "Thanh toán khi nhận được đơn hàng",
                     },
-                    {
-                      value: "credit_card",
-                      label: "Thẻ Tín Dụng",
-                      desc: "Visa, Mastercard, American Express",
-                    },
-                    {
-                      value: "bank_transfer",
-                      label: "Chuyển Khoản Ngân Hàng",
-                      desc: "Chuyển khoản trực tiếp qua ngân hàng",
-                    },
-                    {
-                      value: "paypal",
-                      label: "PayPal",
-                      desc: "Thanh toán an toàn qua PayPal",
-                    },
+                    // {
+                    //   value: "credit_card",
+                    //   label: "Thẻ Tín Dụng",
+                    //   desc: "Visa, Mastercard, American Express",
+                    // },
+                    // {
+                    //   value: "bank_transfer",
+                    //   label: "Chuyển Khoản Ngân Hàng",
+                    //   desc: "Chuyển khoản trực tiếp qua ngân hàng",
+                    // },
+                    // {
+                    //   value: "paypal",
+                    //   label: "PayPal",
+                    //   desc: "Thanh toán an toàn qua PayPal",
+                    // },
                   ].map((method) => (
                     <label
                       key={method.value}
@@ -596,7 +611,7 @@ function CartPage() {
                       {item.product.name} x{item.quantity}
                     </span>
                     <span className="font-semibold">
-                      {formatPrice(item.subtotal)}
+                      {formatCurrency(item.subtotal)}
                     </span>
                   </div>
                 ))}
@@ -605,22 +620,22 @@ function CartPage() {
               <div className="space-y-2 pb-4 border-b">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tạm Tính</span>
-                  <span className="font-medium">{formatPrice(cart.total)}</span>
+                  <span className="font-medium">{formatCurrency(cart.total)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Phí Vận Chuyển</span>
-                  <span className="font-medium">{formatPrice(shippingFee)}</span>
+                  <span className="font-medium">{formatCurrency(shippingFee)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Thuế (10%)</span>
-                  <span className="font-medium">{formatPrice(tax)}</span>
+                  <span className="font-medium">{formatCurrency(tax)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-center my-4">
                 <span className="font-bold">Tổng Cộng</span>
                 <span className="text-2xl font-bold text-black">
-                  {formatPrice(totalPrice)}
+                  {formatCurrency(totalPrice)}
                 </span>
               </div>
 

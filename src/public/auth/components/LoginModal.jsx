@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const LoginModal = ({ isOpen, onClose, onLogin }) => {
     const [formData, setFormData] = useState({
@@ -8,6 +8,23 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+
+    // Load saved credentials when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            const savedUsername = localStorage.getItem('rememberedUsername');
+            const savedPassword = localStorage.getItem('rememberedPassword');
+            const rememberMe = localStorage.getItem('rememberMe') === 'true';
+
+            if (rememberMe && savedUsername && savedPassword) {
+                setFormData({
+                    username: savedUsername,
+                    password: savedPassword,
+                    rememberMe: true
+                });
+            }
+        }
+    }, [isOpen]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -47,12 +64,27 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
 
-            // Reset form on success
-            setFormData({
-                username: "",
-                password: "",
-                rememberMe: false
-            });
+            // Handle remember me functionality
+            if (formData.rememberMe) {
+                // Save credentials to localStorage
+                localStorage.setItem('rememberedUsername', formData.username);
+                localStorage.setItem('rememberedPassword', formData.password);
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                // Clear saved credentials
+                localStorage.removeItem('rememberedUsername');
+                localStorage.removeItem('rememberedPassword');
+                localStorage.removeItem('rememberMe');
+            }
+
+            // Reset form on success (but keep remembered data if checkbox is checked)
+            if (!formData.rememberMe) {
+                setFormData({
+                    username: "",
+                    password: "",
+                    rememberMe: false
+                });
+            }
         } catch (err) {
             setError(err.message || "Đăng nhập thất bại. Vui lòng thử lại.");
         } finally {
@@ -136,7 +168,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                     </div>
 
                     {/* Remember me checkbox */}
-                    <div className="mb-6">
+                    <div className="mb-6 flex items-center justify-between">
                         <label className="flex items-center">
                             <input
                                 type="checkbox"
@@ -150,6 +182,27 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                                 Ghi nhớ mật khẩu
                             </span>
                         </label>
+                        
+                        {/* Clear saved password button */}
+                        {localStorage.getItem('rememberMe') === 'true' && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    localStorage.removeItem('rememberedUsername');
+                                    localStorage.removeItem('rememberedPassword');
+                                    localStorage.removeItem('rememberMe');
+                                    setFormData({
+                                        username: "",
+                                        password: "",
+                                        rememberMe: false
+                                    });
+                                }}
+                                className="text-xs text-gray-500 hover:text-red-600"
+                                disabled={isLoading}
+                            >
+                                Xóa đã lưu
+                            </button>
+                        )}
                     </div>
 
                     {/* Login button */}

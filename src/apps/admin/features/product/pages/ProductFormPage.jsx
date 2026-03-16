@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import productService from "@/domains/product/services/productService";
 import categoryService from "@/domains/category/services/categoryService";
-import RichTextEditor from "../components/RichTextEditor";
+import SimpleEditor from "../components/SimpleEditor";
+import { formatCurrency } from "@/utils/currencyHelpers";
 
 function ProductFormPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function ProductFormPage() {
   const isEditMode = !!id;
 
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [imagePreview, setImagePreview] = useState(null);
   const [activeTab, setActiveTab] = useState("basic");
@@ -54,10 +56,39 @@ function ProductFormPage() {
     }
   }, [id]);
 
+  // Update subcategories when category changes
+  useEffect(() => {
+    if (formData.categoryId) {
+      const selectedCategory = categories.find(
+        (cat) => cat.id === formData.categoryId
+      );
+      setSubcategories(selectedCategory?.subcategories || []);
+
+      // Reset subcategoryId if it doesn't belong to the new category
+      if (
+        selectedCategory &&
+        formData.subcategoryId &&
+        !selectedCategory.subcategories?.find(
+          (sub) => sub.id === formData.subcategoryId
+        )
+      ) {
+        setFormData((prev) => ({ ...prev, subcategoryId: null }));
+      }
+    }
+  }, [formData.categoryId, categories]);
+
   const loadCategories = async () => {
     try {
       const data = await categoryService.getCategories();
       setCategories(data);
+
+      // Set initial subcategories if editing
+      if (isEditMode && formData.categoryId) {
+        const selectedCategory = data.find(
+          (cat) => cat.id === formData.categoryId
+        );
+        setSubcategories(selectedCategory?.subcategories || []);
+      }
     } catch (err) {
       console.error("Error loading categories:", err);
     }
@@ -78,8 +109,6 @@ function ProductFormPage() {
       setFormData({
         name: product.name || "",
         categoryId: product.categoryId || 1,
-        category: product.category || "",
-        subcategory: product.subcategory || "",
         subcategoryId: product.subcategoryId || null,
         price: product.price || 0,
         salePrice: product.salePrice || product.price || 0,
@@ -109,6 +138,12 @@ function ProductFormPage() {
 
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // Update image preview when image URL changes
+    if (name === 'image' && value) {
+      setImagePreview(value);
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -116,23 +151,10 @@ function ProductFormPage() {
           ? checked
           : type === "number"
             ? parseFloat(value) || 0
-            : value,
+            : name === "categoryId" || name === "subcategoryId"
+              ? parseInt(value) || null
+              : value,
     }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setFormData((prev) => ({
-          ...prev,
-          image: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const calculateDiscount = (price, salePrice) => {
@@ -239,31 +261,40 @@ function ProductFormPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const categoryData = categories.find(
-        (c) => c.id === parseInt(formData.categoryId)
-      );
-
+      // Only send fields that backend accepts
       const productData = {
-        ...formData,
-        category: categoryData?.name || formData.category,
+        name: formData.name,
+        categoryId: typeof formData.categoryId === 'number' ? formData.categoryId : parseInt(formData.categoryId),
+        subcategoryId: formData.subcategoryId ? (typeof formData.subcategoryId === 'number' ? formData.subcategoryId : parseInt(formData.subcategoryId)) : null,
+        price: parseFloat(formData.price),
+        salePrice: parseFloat(formData.salePrice) || parseFloat(formData.price),
         discount: calculateDiscount(formData.price, formData.salePrice),
+        image: formData.image,
+        images: formData.images || [],
+        description: formData.description,
+        packageContents: formData.packageContents || [],
+        descriptionSections: formData.descriptionSections || [],
+        specifications: formData.specifications || {},
+        inStock: formData.inStock,
+        quantity: parseInt(formData.quantity) || 0,
+        isFeatured: formData.isFeatured || false,
+        isFlashSale: formData.isFlashSale || false,
       };
 
       if (isEditMode) {
-        productData.id = parseInt(id);
-        // TODO: Update to backend
-        console.log("Updated product:", productData);
-        alert("Sản phẩm đã được cập nhật!");
+        // Update existing product
+        await productService.updateProduct(parseInt(id), productData);
+        alert("Sản phẩm đã được cập nhật thành công!");
       } else {
-        // TODO: Save to backend
-        console.log("New product:", productData);
-        alert("Sản phẩm đã được thêm!");
+        // Create new product
+        await productService.createProduct(productData);
+        alert("Sản phẩm đã được thêm thành công!");
       }
 
       navigate("/admin/products");
     } catch (err) {
       console.error("Error saving product:", err);
-      alert("Không thể lưu sản phẩm");
+      alert("Không thể lưu sản phẩm: " + (err.message || "Lỗi không xác định"));
     }
   };
 
@@ -271,7 +302,7 @@ function ProductFormPage() {
     const message = isEditMode
       ? "Bạn có chắc muốn hủy? Những thay đổi chưa lưu sẽ bị mất."
       : "Bạn có chắc muốn hủy? Dữ liệu chưa lưu sẽ bị mất.";
-    
+
     if (window.confirm(message)) {
       navigate("/admin/products");
     }
@@ -330,11 +361,10 @@ function ProductFormPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition ${
-                  activeTab === tab.id
-                    ? "border-black text-black"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition ${activeTab === tab.id
+                  ? "border-black text-black"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 <i className={`fa-solid ${tab.icon} mr-2`}></i>
                 {tab.label}
@@ -389,14 +419,26 @@ function ProductFormPage() {
                     <label className="block text-sm font-semibold mb-2">
                       Danh mục con
                     </label>
-                    <input
-                      type="text"
-                      name="subcategory"
-                      value={formData.subcategory}
+                    <select
+                      name="subcategoryId"
+                      value={formData.subcategoryId || ""}
                       onChange={handleFormChange}
                       className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
-                      placeholder="VD: Full Frame"
-                    />
+                      disabled={subcategories.length === 0}
+                    >
+                      <option value="">-- Chọn danh mục con --</option>
+                      {subcategories.map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.name}
+                        </option>
+                      ))}
+                    </select>
+                    {subcategories.length === 0 && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        <i className="fa-solid fa-info-circle mr-1"></i>
+                        Danh mục này chưa có danh mục con
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -490,7 +532,7 @@ function ProductFormPage() {
                       placeholder="39900000"
                     />
                     {formData.discount > 0 && (
-                      <p className="text-xs text-green-600 mt-1">
+                      <p className="text-xs text-green-600 " style={{ marginTop: '10px' }}>
                         <i className="fa-solid fa-tag mr-1"></i>
                         Giảm giá: {formData.discount}%
                       </p>
@@ -513,38 +555,6 @@ function ProductFormPage() {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-sm mb-2">
-                    <i className="fa-solid fa-calculator mr-2"></i>
-                    Tóm tắt giá
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Giá gốc:</span>
-                      <span className="font-semibold ml-2">
-                        {formData.price.toLocaleString("vi-VN")}đ
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Giá bán:</span>
-                      <span className="font-semibold ml-2 text-green-600">
-                        {(formData.salePrice || formData.price).toLocaleString("vi-VN")}đ
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Giảm giá:</span>
-                      <span className="font-semibold ml-2 text-red-600">
-                        {formData.discount}%
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Tồn kho:</span>
-                      <span className="font-semibold ml-2">
-                        {formData.quantity} sản phẩm
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -556,24 +566,23 @@ function ProductFormPage() {
                 {/* Main Image */}
                 <div>
                   <label className="block text-sm font-semibold mb-2">
-                    Hình ảnh chính
+                    Hình ảnh chính * (URL)
                   </label>
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="w-full border rounded-md px-3 py-2 text-sm mb-2"
-                      />
                       <input
                         type="text"
                         name="image"
                         value={formData.image}
                         onChange={handleFormChange}
                         className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:border-black"
-                        placeholder="Hoặc nhập URL: https://example.com/image.jpg"
+                        placeholder="https://example.com/image.jpg"
+                        required
                       />
+                      <p className="text-xs text-gray-500 mt-2">
+                        <i className="fa-solid fa-info-circle mr-1"></i>
+                        Nhập URL trực tiếp của hình ảnh
+                      </p>
                     </div>
                     {(imagePreview || formData.image) && (
                       <div className="w-32 h-32 border rounded-md overflow-hidden flex-shrink-0">
@@ -581,6 +590,9 @@ function ProductFormPage() {
                           src={imagePreview || formData.image}
                           alt="Preview"
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/150?text=Invalid+URL';
+                          }}
                         />
                       </div>
                     )}
@@ -649,7 +661,7 @@ function ProductFormPage() {
                   <label className="block text-sm font-semibold mb-2">
                     Mô tả ngắn
                   </label>
-                  <RichTextEditor
+                  <SimpleEditor
                     value={formData.description}
                     onChange={handleFormChange}
                     placeholder="Nhập mô tả ngắn gọn về sản phẩm..."
@@ -806,7 +818,7 @@ function ProductFormPage() {
                       placeholder="Tiêu đề mục..."
                       className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:border-black"
                     />
-                    <RichTextEditor
+                    <SimpleEditor
                       value={newSectionContent}
                       onChange={(e) => setNewSectionContent(e.target.value)}
                       placeholder="Nội dung mục mô tả..."
@@ -836,9 +848,10 @@ function ProductFormPage() {
                             <i className="fa-solid fa-trash"></i>
                           </button>
                         </div>
-                        <p className="text-sm text-gray-600 whitespace-pre-wrap">
-                          {section.content}
-                        </p>
+                        <div
+                          className="text-sm text-gray-600 prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: section.content }}
+                        />
                       </div>
                     ))}
                   </div>

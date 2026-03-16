@@ -51,11 +51,19 @@ export const AuthProvider = ({ children }) => {
                 const payload = jwtDecode(token);
                 const rolesFromToken = Array.isArray(payload?.roles) ? payload.roles : [];
 
+                // Ensure roles array exists
+                let finalRoles = [];
+                if (userInfo.roles && Array.isArray(userInfo.roles) && userInfo.roles.length > 0) {
+                    finalRoles = userInfo.roles;
+                } else if (userInfo.role && typeof userInfo.role === 'string') {
+                    finalRoles = [userInfo.role];
+                } else if (rolesFromToken.length > 0) {
+                    finalRoles = rolesFromToken;
+                }
+
                 const merged = {
                     ...userInfo,
-                    roles: userInfo.roles?.length > 0
-                        ? userInfo.roles
-                        : rolesFromToken
+                    roles: finalRoles
                 };
 
                 setUser(merged);

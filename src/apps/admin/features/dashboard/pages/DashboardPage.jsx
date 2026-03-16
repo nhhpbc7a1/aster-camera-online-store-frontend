@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -11,6 +11,9 @@ import {
   ArrowDownRight,
   Eye
 } from 'lucide-react';
+import productService from '@/domains/product/services/productService';
+import categoryService from '@/domains/category/services/categoryService';
+import { formatCurrency } from '@/utils/currencyHelpers';
 
 // Stat Card Component
 const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
@@ -102,38 +105,121 @@ const TopProductItem = ({ rank, name, category, sales, revenue, trend }) => {
 };
 
 const DashboardPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [productsData, categoriesData] = await Promise.all([
+        productService.getProducts(),
+        categoryService.getCategories(),
+      ]);
+      setProducts(productsData);
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error('Error loading dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate real stats from data
+  const calculateStats = () => {
+    const totalRevenue = products.reduce((sum, p) => {
+      const price = p.salePrice || p.price;
+      const quantity = p.quantity || 0;
+      return sum + (price * quantity);
+    }, 0);
+
+    const inStockProducts = products.filter(p => p.inStock).length;
+    const featuredProducts = products.filter(p => p.isFeatured).length;
+    const flashSaleProducts = products.filter(p => p.isFlashSale).length;
+
+    return {
+      totalRevenue,
+      totalProducts: products.length,
+      inStockProducts,
+      outOfStockProducts: products.length - inStockProducts,
+      featuredProducts,
+      flashSaleProducts,
+      totalCategories: categories.length,
+      totalSubcategories: categories.reduce(
+        (sum, cat) => sum + (cat.subcategories?.length || 0),
+        0
+      ),
+    };
+  };
+
+  const stats = calculateStats();
+
+  // Get top products by price * quantity
+  const getTopProducts = () => {
+    return [...products]
+      .map(p => ({
+        ...p,
+        revenue: (p.salePrice || p.price) * (p.quantity || 0),
+      }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
+  };
+
+  const topProducts = getTopProducts();
+
+  // Get category name helper
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category?.name || 'N/A';
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Mock data - thay thế bằng API calls thực tế
-  const stats = [
+  const statsCards = [
     {
-      title: 'Tổng doanh thu',
-      value: '₫324.5M',
+      title: 'Tổng giá trị kho',
+      value: formatCurrency(stats.totalRevenue),
       change: '+12.5%',
       changeType: 'positive',
       icon: DollarSign,
       color: 'green'
     },
     {
-      title: 'Đơn hàng',
-      value: '1,429',
-      change: '+8.2%',
+      title: 'Sản phẩm',
+      value: stats.totalProducts.toString(),
+      change: `${stats.inStockProducts} còn hàng`,
       changeType: 'positive',
-      icon: ShoppingBag,
+      icon: Package,
       color: 'blue'
     },
     {
-      title: 'Sản phẩm',
-      value: '2,847',
-      change: '+23',
+      title: 'Danh mục',
+      value: stats.totalCategories.toString(),
+      change: `${stats.totalSubcategories} danh mục con`,
       changeType: 'positive',
-      icon: Package,
+      icon: ShoppingBag,
       color: 'purple'
     },
     {
-      title: 'Khách hàng',
-      value: '8,492',
-      change: '+15.3%',
+      title: 'Nổi bật',
+      value: stats.featuredProducts.toString(),
+      change: `${stats.flashSaleProducts} Flash Sale`,
       changeType: 'positive',
-      icon: Users,
+      icon: Star,
       color: 'orange'
     }
   ];
@@ -146,7 +232,7 @@ const DashboardPage = () => {
     { orderId: 'ORD-001230', customer: 'Hoàng Văn E', product: 'Canon R6 Mark II', amount: '₫68.9M', status: 'cancelled', time: '3 giờ trước' }
   ];
 
-  const topProducts = [
+  const topProductsOld = [
     { rank: 1, name: 'Canon EOS R5', category: 'Máy ảnh Mirrorless', sales: '243', revenue: '₫21.7M', trend: '+18%' },
     { rank: 2, name: 'Sony A7 IV', category: 'Máy ảnh Mirrorless', sales: '198', revenue: '₫12.3M', trend: '+15%' },
     { rank: 3, name: 'Nikon Z9', category: 'Máy ảnh Mirrorless', sales: '156', revenue: '₫19.6M', trend: '+22%' },
@@ -164,75 +250,110 @@ const DashboardPage = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+        {statsCards.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders - Takes 2 columns */}
+        {/* Product Summary - Takes 2 columns */}
         <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Đơn hàng gần đây</h2>
-              <p className="text-sm text-gray-500 mt-1">Các đơn hàng mới nhất trong hệ thống</p>
+              <h2 className="text-lg font-semibold text-gray-900">Tổng quan Sản phẩm</h2>
+              <p className="text-sm text-gray-500 mt-1">Thống kê sản phẩm trong hệ thống</p>
             </div>
-            <button className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1">
-              Xem tất cả
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
           </div>
-          <div className="space-y-1">
-            {recentOrders.map((order, index) => (
-              <RecentOrderItem key={index} {...order} />
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <div className="text-2xl font-bold text-blue-600">{stats.totalProducts}</div>
+              <div className="text-sm text-blue-600 mt-1">Tổng sản phẩm</div>
+            </div>
+            <div className="bg-green-50 rounded-lg p-4">
+              <div className="text-2xl font-bold text-green-600">{stats.inStockProducts}</div>
+              <div className="text-sm text-green-600 mt-1">Còn hàng</div>
+            </div>
+            <div className="bg-red-50 rounded-lg p-4">
+              <div className="text-2xl font-bold text-red-600">{stats.outOfStockProducts}</div>
+              <div className="text-sm text-red-600 mt-1">Hết hàng</div>
+            </div>
+            <div className="bg-yellow-50 rounded-lg p-4">
+              <div className="text-2xl font-bold text-yellow-600">{stats.featuredProducts}</div>
+              <div className="text-sm text-yellow-600 mt-1">Nổi bật</div>
+            </div>
+          </div>
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Phân bố theo danh mục</h3>
+            <div className="space-y-2">
+              {categories.slice(0, 5).map((category) => {
+                const productCount = products.filter(p => p.categoryId === category.id).length;
+                const percentage = stats.totalProducts > 0 ? (productCount / stats.totalProducts * 100).toFixed(1) : 0;
+                return (
+                  <div key={category.id} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-gray-700">{category.name}</span>
+                        <span className="text-sm font-medium text-gray-900">{productCount} ({percentage}%)</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Quick Stats */}
         <div className="space-y-6">
-          {/* Revenue Chart Card */}
+          {/* Inventory Value Chart Card */}
           <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-gray-900">Doanh thu tuần này</h3>
+              <h3 className="text-base font-semibold text-gray-900">Giá trị tồn kho</h3>
               <Eye className="w-5 h-5 text-gray-400" />
             </div>
             <div className="space-y-3">
-              <div className="flex items-end gap-2 h-32">
-                {[65, 45, 75, 55, 85, 70, 90].map((height, index) => (
-                  <div key={index} className="flex-1 bg-primary-100 rounded-t-lg hover:bg-primary-200 transition-colors" style={{ height: `${height}%` }} />
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>T2</span>
-                <span>T3</span>
-                <span>T4</span>
-                <span>T5</span>
-                <span>T6</span>
-                <span>T7</span>
-                <span>CN</span>
-              </div>
-              <div className="pt-3 border-t border-gray-100">
+              <div className="pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Tổng cộng</span>
-                  <span className="text-lg font-bold text-gray-900">₫45.8M</span>
+                  <span className="text-sm text-gray-600">Tổng giá trị</span>
+                  <span className="text-lg font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</span>
                 </div>
-                <div className="flex items-center gap-1 mt-1">
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-600">+24.5% so với tuần trước</span>
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Còn hàng</span>
+                    <span className="font-medium text-green-600">{stats.inStockProducts}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Hết hàng</span>
+                    <span className="font-medium text-red-600">{stats.outOfStockProducts}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Flash Sale</span>
+                    <span className="font-medium text-orange-600">{stats.flashSaleProducts}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Categories Summary */}
           <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-6 text-white shadow-sm">
-            <h3 className="text-base font-semibold mb-2">Khách hàng mới</h3>
-            <p className="text-3xl font-bold mb-4">+342</p>
-            <p className="text-primary-100 text-sm mb-4">Tăng 23% so với tháng trước</p>
-            <button className="w-full bg-white text-primary-600 px-4 py-2 rounded-lg font-medium hover:bg-primary-50 transition-colors">
-              Xem chi tiết
+            <h3 className="text-base font-semibold mb-2">Danh mục</h3>
+            <p className="text-3xl font-bold mb-4">{stats.totalCategories}</p>
+            <p className="text-primary-100 text-sm mb-4">
+              {stats.totalSubcategories} danh mục con
+            </p>
+            <button 
+              onClick={() => window.location.href = '/admin/categories'}
+              className="w-full bg-white text-primary-600 px-4 py-2 rounded-lg font-medium hover:bg-primary-50 transition-colors"
+            >
+              Quản lý danh mục
             </button>
           </div>
         </div>
@@ -242,19 +363,53 @@ const DashboardPage = () => {
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Top sản phẩm bán chạy</h2>
-            <p className="text-sm text-gray-500 mt-1">Các sản phẩm có doanh số cao nhất tháng này</p>
+            <h2 className="text-lg font-semibold text-gray-900">Top sản phẩm giá trị cao</h2>
+            <p className="text-sm text-gray-500 mt-1">Sản phẩm có tổng giá trị (giá × số lượng) cao nhất</p>
           </div>
-          <button className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1">
-            Xem báo cáo
+          <button 
+            onClick={() => window.location.href = '/admin/products'}
+            className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1"
+          >
+            Xem tất cả
             <ArrowUpRight className="w-4 h-4" />
           </button>
         </div>
-        <div className="space-y-1">
-          {topProducts.map((product, index) => (
-            <TopProductItem key={index} {...product} />
-          ))}
-        </div>
+        {topProducts.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <Package className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+            <p>Chưa có sản phẩm nào</p>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {topProducts.map((product, index) => (
+              <div key={product.id} className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                  <span className="text-sm font-bold text-primary-600">#{index + 1}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                  <p className="text-xs text-gray-500">{getCategoryName(product.categoryId)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(product.revenue)}</p>
+                  <p className="text-xs text-gray-500">{product.quantity} trong kho</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  {product.isFeatured && (
+                    <span className="text-yellow-500" title="Nổi bật">
+                      <Star className="w-4 h-4 fill-current" />
+                    </span>
+                  )}
+                  {product.inStock ? (
+                    <span className="text-green-600 text-xs">✓</span>
+                  ) : (
+                    <span className="text-red-600 text-xs">✗</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -33,6 +33,72 @@ const categoryService = {
       throw error;
     }
   },
+
+  // Create category
+  createCategory: async (categoryData) => {
+    try {
+      const response = await categoryApi.createCategory(categoryData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  },
+
+  // Update category
+  updateCategory: async (categoryId, categoryData) => {
+    try {
+      const response = await categoryApi.updateCategory(categoryId, categoryData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating category:", error);
+      throw error;
+    }
+  },
+
+  // Delete category
+  deleteCategory: async (categoryId) => {
+    try {
+      const response = await categoryApi.deleteCategory(categoryId);
+      return response;
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      throw error;
+    }
+  },
+
+  // Create subcategory
+  createSubcategory: async (subcategoryData) => {
+    try {
+      const response = await categoryApi.createSubcategory(subcategoryData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating subcategory:", error);
+      throw error;
+    }
+  },
+
+  // Update subcategory
+  updateSubcategory: async (subcategoryId, subcategoryData) => {
+    try {
+      const response = await categoryApi.updateSubcategory(subcategoryId, subcategoryData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating subcategory:", error);
+      throw error;
+    }
+  },
+
+  // Delete subcategory
+  deleteSubcategory: async (subcategoryId) => {
+    try {
+      const response = await categoryApi.deleteSubcategory(subcategoryId);
+      return response;
+    } catch (error) {
+      console.error("Error deleting subcategory:", error);
+      throw error;
+    }
+  },
 };
 
 export default categoryService;
