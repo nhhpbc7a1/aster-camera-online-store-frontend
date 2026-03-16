@@ -46,26 +46,31 @@ function TopBar() {
                 </div>
 
                 <div className="flex gap-2 ml-4 flex-shrink-0 w-[200px]">
+                    <a href="https://www.facebook.com/people/ASTER-Production/61585158583823/?locale=vi_VN" target="_blank" rel="noopener noreferrer">
+                        <span className="w-8 h-6 flex items-center justify-center rounded-full bg-white text-blue-600 hover:scale-110 transition cursor-pointer">
+                            <i className="fa-brands fa-facebook-f"></i>
+                        </span>
+                    </a>
 
-                    <span className="w-8 h-6 flex items-center justify-center rounded-full bg-white text-blue-600 hover:scale-110 transition cursor-pointer">
-                        <i className="fa-brands fa-facebook-f"></i>
-                    </span>
-
-                    <span className="w-8 h-6 flex items-center justify-center rounded-full bg-white text-pink-500 hover:scale-110 transition cursor-pointer">
+                    {/* <span className="w-8 h-6 flex items-center justify-center rounded-full bg-white text-pink-500 hover:scale-110 transition cursor-pointer">
                         <i className="fa-brands fa-instagram"></i>
-                    </span>
+                    </span> */}
 
-                    <span className="w-8 h-6 flex items-center justify-center rounded-full bg-black text-white hover:scale-110 transition cursor-pointer">
+                    {/* <span className="w-8 h-6 flex items-center justify-center rounded-full bg-black text-white hover:scale-110 transition cursor-pointer">
                         <i className="fa-brands fa-tiktok"></i>
-                    </span>
+                    </span> */}
 
-                    <span className="w-8 h-6 flex items-center justify-center rounded-full bg-gray-600 text-white hover:scale-110 transition cursor-pointer">
-                        <i className="fa-solid fa-envelope"></i>
-                    </span>
+                    <a href="mailto:asterproduction333@gmail.com" target="_blank" rel="noopener noreferrer">
+                        <span className="w-8 h-6 flex items-center justify-center rounded-full bg-gray-600 text-white hover:scale-110 transition cursor-pointer">
+                            <i className="fa-solid fa-envelope"></i>
+                        </span>
+                    </a>
 
-                    <span className="w-8 h-6 flex items-center justify-center rounded-full bg-green-600 text-white hover:scale-110 transition cursor-pointer">
-                        <i className="fa-solid fa-phone"></i>
-                    </span>
+                    <a href="tel:0794352262" target="_blank" rel="noopener noreferrer">
+                        <span className="w-8 h-6 flex items-center justify-center rounded-full bg-green-600 text-white hover:scale-110 transition cursor-pointer">
+                            <i className="fa-solid fa-phone"></i>
+                        </span>
+                    </a>
 
                 </div>
             </div>
