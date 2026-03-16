@@ -49,12 +49,12 @@ function CategoryNavbar() {
 
             {/* News Link */}
             <span className="text-gray-400">|</span>
-            <Link
+            {/* <Link
               to="/news"
               className="uppercase px-3 py-2 flex items-center gap-1 hover:text-black whitespace-nowrap transition"
             >
               TIN TỨC
-            </Link>
+            </Link> */}
           </>
         )}
       </div>

@@ -53,7 +53,7 @@ function HomePage() {
 
                 <StoreSection />
 
-                <NewsSection />
+                {/* <NewsSection /> */}
             </div>
         </div>
     );
