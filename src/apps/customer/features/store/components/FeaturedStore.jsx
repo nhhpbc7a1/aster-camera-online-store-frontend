@@ -24,7 +24,7 @@ function FeaturedStore({ store, onSelectStore }) {
     <div className="bg-white rounded-lg shadow-md mb-12">
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold text-black mb-8">
-          Cửa hàng chính - BNCamera Cầu Giấy
+          Cửa hàng chính - ASTER Production
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -82,9 +82,8 @@ function FeaturedStore({ store, onSelectStore }) {
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition ${
-                      idx === currentImageIndex ? "bg-white w-6" : "bg-white/50"
-                    }`}
+                    className={`w-2 h-2 rounded-full transition ${idx === currentImageIndex ? "bg-white w-6" : "bg-white/50"
+                      }`}
                   />
                 ))}
               </div>
@@ -95,14 +94,11 @@ function FeaturedStore({ store, onSelectStore }) {
           <div className="lg:col-span-4">
             <div className="mb-6">
               <h3 className="text-xl font-bold text-black mb-2">ĐỊA CHỈ</h3>
-              <p className="text-gray-700 mb-4">Cơ sở nút Hà Nội</p>
+              <p className="font-semibold text-black">Cơ sở TP.HCM</p>
 
               <div className="space-y-3">
                 <div>
-                  <p className="font-semibold text-black">
-                    54 Cầu Giấy, Hà Nội
-                  </p>
-                  <p className="text-gray-600 text-sm">Quận Cầu Giấy, Hà Nội</p>
+                  <p className="text-gray-600 text-sm">{store.address}</p>
                 </div>
 
                 <div className="flex items-start gap-2">
@@ -118,20 +114,20 @@ function FeaturedStore({ store, onSelectStore }) {
                   <span className="text-red-600 font-semibold">
                     Điện thoại:
                   </span>
-                  <span className="text-gray-700">0987888222</span>
+                  <span className="text-gray-700">{store.phones[0]}</span>
                 </div>
 
                 <div className="flex items-start gap-2">
                   <span className="text-red-600 font-semibold">Email:</span>
                   <span className="text-gray-700">
-                    store.caugiay@bncamera.com
+                    {store.email}
                   </span>
                 </div>
 
                 <div className="flex items-start gap-2">
                   <span className="text-red-600 font-semibold">Mô tả:</span>
                   <span className="text-gray-700">
-                    Cửa hàng chính, phục vụ toàn bộ khu Cầu Giấy
+                    {store.description}
                   </span>
                 </div>
               </div>
