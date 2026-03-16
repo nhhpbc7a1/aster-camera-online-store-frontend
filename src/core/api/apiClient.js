@@ -1,9 +1,11 @@
 // API Client Configuration với Axios
 import axios from 'axios';
 
-// Base configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
+// Base configuration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://aster-camera-online-store-backend.onrender.com/api';
+
+console.log('API_BASE_URL', API_BASE_URL);
 // Tạo axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -68,12 +70,12 @@ export const handleApiError = (error) => {
     // Server responded with error status
     // NestJS throws errors in format: { statusCode: 400, message: "...", error: "Bad Request" }
     // API Gateway returns error in format: { isSuccess: false, error: { message: "...", details: null } }
-    const errorMessage = 
+    const errorMessage =
       error.response.data?.error?.message ||  // API Gateway format
       error.response.data?.message ||         // NestJS direct message format
       error.response.data?.error ||           // NestJS error type
       `HTTP Error: ${error.response.status}`;
-    
+
     return {
       success: false,
       message: errorMessage,
