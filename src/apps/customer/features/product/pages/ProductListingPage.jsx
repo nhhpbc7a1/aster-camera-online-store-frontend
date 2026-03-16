@@ -110,7 +110,7 @@ function ProductListingPage() {
       }
 
       applyFilters(mockProducts);
-      setError("Lỗi tải sản phẩm. Đang hiển thị dữ liệu tạm thời...");
+      // setError("Lỗi tải sản phẩm. Đang hiển thị dữ liệu tạm thời...");
     } finally {
       setLoading(false);
     }
@@ -413,7 +413,11 @@ function ProductListingPage() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    showAddButton={true}
+                  />
                 ))}
               </div>
 
