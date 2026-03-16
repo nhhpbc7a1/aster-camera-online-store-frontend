@@ -9,7 +9,7 @@ function StorePage() {
   const [selectedStore, setSelectedStore] = useState(mockStores[0]);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white max-w-[1024px] mx-auto">
       <StoreHeader />
       <div className="container mx-auto px-4">
         <FeaturedStore store={mockStores[0]} />

@@ -1,8 +1,13 @@
+import storeImage1 from "@/assets/store-image-1.png";
+import storeImage2 from "@/assets/store-image-2.png";
+import storeImage3 from "@/assets/store-image-3.png";
+import storeImage4 from "@/assets/store-image-4.png";
+
 export const mockStores = [
   {
     id: 1,
     name: "ASTER Production",
-    address: "123, Đường ABC, Quận XYZ, TP.HCM",
+    address: "202, Đường Lê Văn Việt, Phường 1, Quận 10, TP.HCM",
     phones: ["0794352262"],
     email: "asterproduction333@gmail.com",
     hours: "8:00 AM - 9:00 PM",
@@ -10,13 +15,12 @@ export const mockStores = [
     longitude: 105.7842,
     featured: true,
     description: "Cửa hàng chính, phục vụ toàn bộ TP.HCM",
-    image:
-      "https://bncamera.com/wp-content/uploads/2025/03/banner-bncamera-dji-scaled-scaled-1112x800.jpg",
+    image: storeImage1,
   },
   {
     id: 2,
     name: "ASTER Production",
-    address: "123, Đường ABC, Quận XYZ, TP.HCM",
+    address: "202, Đường Lê Duẩn, Phường 3, Quận 10, TP.HCM",
     phones: ["0794352262"],
     email: "asterproduction333@gmail.com",
     hours: "8:00 AM - 9:00 PM",
@@ -24,21 +28,20 @@ export const mockStores = [
     longitude: 105.7853,
     featured: false,
     description: "Cửa hàng chính, phục vụ toàn bộ TP.HCM",
-    image:
-      "https://bncamera.com/wp-content/uploads/2025/03/banner-bncamera-dji-scaled-scaled-1112x800.jpg",
+    image: storeImage2,
   },
   {
     id: 3,
     name: "ASTER Production",
-    address: "123, Đường ABC, Quận XYZ, TP.HCM",
+    address: "202, Đường Nguyễn Đình Chiểu, Phường 3, Quận 3, TP.HCM",
     phones: ["0794352262"],
     email: "asterproduction333@gmail.com",
-    hours: "9:00 AM - 8:00 PM",
-    latitude: 21.0334,
-    longitude: 105.8544,
+    hours: "8:00 AM - 9:00 PM",
+    latitude: 21.0285,
+    longitude: 105.7853,
     featured: false,
-    description: "Chi nhánh trung tâm, tiện lợi cho khách từ khắp thành phố",
-    image: "https://bncamera.com/wp-content/uploads/2025/11/5-1-scaled.jpg",
+    description: "Cửa hàng chính, phục vụ toàn bộ TP.HCM",
+    image: storeImage3,
   },
   {
     id: 4,
@@ -51,7 +54,7 @@ export const mockStores = [
     longitude: 105.7842,
     featured: false,
     description: "Cửa hàng chính, phục vụ toàn bộ TP.HCM",
-    image: "https://bncamera.com/wp-content/uploads/2025/03/banner-bncamera-dji-scaled-scaled-1112x800.jpg",
+    image: storeImage4,
   },
 ];
 

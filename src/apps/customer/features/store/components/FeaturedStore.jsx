@@ -1,13 +1,17 @@
 import { useState } from "react";
+import storeImage1 from "@/assets/store-image-1.png";
+import storeImage2 from "@/assets/store-image-2.png";
+import storeImage3 from "@/assets/store-image-3.png";
+import storeImage4 from "@/assets/store-image-4.png";
 
 function FeaturedStore({ store, onSelectStore }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const storeImages = [
-    "https://bncamera.com/wp-content/uploads/2025/03/bncamera-saigon-scaled-scaled.jpg",
-    "https://bncamera.com/wp-content/uploads/2025/03/banner-bncamera-dji-scaled-scaled-1112x800.jpg",
-    "https://bncamera.com/wp-content/uploads/2025/11/5-1-scaled.jpg",
-    "https://bncamera.com/wp-content/uploads/2025/11/2-3-scaled.jpg",
+    storeImage1,
+    storeImage2,
+    storeImage3,
+    storeImage4,
   ];
 
   const nextImage = () => {
@@ -24,7 +28,7 @@ function FeaturedStore({ store, onSelectStore }) {
     <div className="bg-white rounded-lg shadow-md mb-12">
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold text-black mb-8">
-          Cửa hàng chính - ASTER Production
+          {/* Cửa hàng chính - ASTER Production */}
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -34,7 +38,7 @@ function FeaturedStore({ store, onSelectStore }) {
               <img
                 src={storeImages[currentImageIndex]}
                 alt="Store"
-                className="w-full h-80 object-cover"
+                className="w-full h-80 object-contain"
               />
 
               {/* Navigation buttons */}
