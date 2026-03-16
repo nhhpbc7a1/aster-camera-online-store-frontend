@@ -61,15 +61,6 @@ export const mockCategories = [
     ],
   },
   {
-    id: 6,
-    name: "Robot hút bui",
-    description: "Professional lighting equipment",
-    imageUrl: "/images/categories/lighting.jpg",
-    productCount: 18,
-    slug: "robot-hut-bui",
-    subcategories: [],
-  },
-  {
     id: 7,
     name: "Đồ cũ",
     slug: "do-cu",
@@ -84,11 +75,5 @@ export const mockCategories = [
       { id: 82, name: "Túi, Balo", slug: "tui-balo" },
       { id: 83, name: "Tripod", slug: "tripod" },
     ],
-  },
-  {
-    id: 9,
-    name: "Tin tức",
-    slug: "tin-tuc",
-    subcategories: [],
   },
 ];

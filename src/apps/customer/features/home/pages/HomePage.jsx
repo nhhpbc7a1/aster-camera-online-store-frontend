@@ -5,6 +5,13 @@ import ProductSection from "@/apps/customer/features/home/components/ProductSect
 import ReviewSection from "@/apps/customer/features/home/components/ReviewSection";
 import StoreSection from "@/apps/customer/features/home/components/StoreSection";
 import NewsSection from "@/apps/customer/features/home/components/NewsSection";
+import thuCuDoiMoiImage from "@/assets/thu-cu-doi-moi.png";
+import hangCuImage from "@/assets/hang-cu-gia-chat.png";
+import mayAnhImage from "@/assets/may-anh-chuyen-nghiep.png";
+import ongKinhImage from "@/assets/ong-kinh-may-anh.png";
+import cameraImage from "@/assets/camera-hanh-dong.png";
+import microImage from "@/assets/thiet-bi-ghi-am.png";
+import gimbalImage from "@/assets/thiet-bi-chong-rung.png";
 
 function HomePage() {
     return (
@@ -14,31 +21,31 @@ function HomePage() {
 
 
             <div className="container mx-auto ">
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-thu-cu-doi-moi.jpg" />
+                <PromoBanner image={thuCuDoiMoiImage} />
 
                 <FlashSale />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-may-anh.jpg" />
+                <PromoBanner image={mayAnhImage} />
 
                 <ProductSection title="TOP MÁY ẢNH" />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-ong-kinh.jpg" />
+                <PromoBanner image={ongKinhImage} />
 
                 <ProductSection title="TOP ỐNG KÍNH" />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-camera.jpg" />
+                <PromoBanner image={cameraImage} />
 
                 <ProductSection title="TOP ACTION CAMERA" />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-micro-thu-am.jpg" />
+                <PromoBanner image={microImage} />
 
                 <ProductSection title="TOP MICROPHONE" />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-gimbal.jpg" />
+                <PromoBanner image={gimbalImage} />
 
                 <ProductSection title="TOP GIMBAL" />
 
-                <PromoBanner image="https://bncamera.com/wp-content/uploads/2026/03/banner-hang-cu.jpg" />
+                <PromoBanner image={hangCuImage} />
 
                 <ProductSection title="TOP ĐỒ CŨ" />
 
