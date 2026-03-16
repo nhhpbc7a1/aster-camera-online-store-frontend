@@ -4,6 +4,7 @@ import TopBar from "./TopBar";
 import Header from "./Header";
 import CategoryNavbar from "./CategoryNavbar";
 import Footer from "./Footer";
+import FloatingContactButtons from "./FloatingContactButtons";
 
 function CustomerLayout() {
   const [showFloatingHeader, setShowFloatingHeader] = useState(false);
@@ -75,6 +76,9 @@ function CustomerLayout() {
       </main>
 
       <Footer />
+
+      {/* Floating Contact Buttons */}
+      <FloatingContactButtons />
     </div>
   );
 }
