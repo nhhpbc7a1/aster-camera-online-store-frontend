@@ -103,13 +103,14 @@ function ProductDetailPage() {
   return (
     <div className="container mx-auto px-4 py-8 bg-white">
       {/* Breadcrumb */}
+
       <nav className="mb-8 flex items-center text-sm text-gray-600">
         {breadcrumbs.map((breadcrumb, idx) => (
           <div key={idx} className="flex items-center">
             {breadcrumb.href ? (
               <a
                 href={breadcrumb.href}
-                className="text-blue-600 hover:text-blue-800"
+                className="text-black hover:underline"
               >
                 {breadcrumb.label}
               </a>
@@ -256,10 +257,40 @@ function ProductDetailPage() {
           </div>
 
           {/* Price Guarantee Banner */}
-          <div className="mb-6 bg-[#E5F5E5] rounded-lg py-2 text-center">
+          <div className="mb-6 bg-[#E5F5E5] rounded-lg py-2 pl-4">
             <p className="text-[#447744] font-semibold text-sm">
               Giá cam kết luôn tốt nhất!
             </p>
+          </div>
+
+          <div className="mb-6 rounded-lg py-2 text-center relative overflow-hidden">
+            <style>{`
+              @keyframes bounce {
+                0%, 100% {
+                  transform: translateY(0);
+                }
+                50% {
+                  transform: translateY(-5px);
+                }
+              }
+              .flash-sale-banner {
+                background: linear-gradient(135deg, #ff4444 0%, #cc0000 50%, #990000 100%);
+                animation: bounce 2s ease-in-out infinite;
+              }
+              .flash-sale-text {
+                color: #FFFF00;
+                text-shadow: 0 0 15px rgba(255, 255, 0, 1), 0 0 25px rgba(255, 255, 0, 0.8), 0 0 35px rgba(255, 255, 0, 0.6);
+                font-weight: bold;
+                letter-spacing: 3px;
+              }
+            `}</style>
+            <div className="flash-sale-banner rounded-lg py-2">
+              <p className="flash-sale-text text-3xl font-bold uppercase flex items-center justify-center gap-2">
+                <i className="fa-solid fa-bolt text-yellow-200"></i>
+                Flash Sale!
+                <i className="fa-solid fa-bolt text-yellow-200"></i>
+              </p>
+            </div>
           </div>
 
           {/* Price */}
@@ -400,7 +431,7 @@ function ProductDetailPage() {
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
               <div className="flex items-center gap-4 mb-6">
                 <span className="inline-block bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-semibold">
-                  MỚI TẢ
+                  MÔ TẢ
                 </span>
               </div>
 
@@ -415,7 +446,7 @@ function ProductDetailPage() {
                 {/* Table of Contents */}
                 {product.descriptionSections &&
                   product.descriptionSections.length > 0 && (
-                    <div className="mb-8 border-t border-gray-200 pt-6">
+                    <div className="mb-8 border-2 border-black rounded-lg p-4">
                       <div className="flex items-center gap-3 mb-4">
                         <svg
                           className="w-5 h-5 text-gray-600"
@@ -431,7 +462,7 @@ function ProductDetailPage() {
                           <li key={idx} className="text-gray-700">
                             <a
                               href={`#section-${idx}`}
-                              className="text-blue-600 hover:text-blue-800"
+                              className="text-black font-semibold hover:underline"
                             >
                               {section.title}
                             </a>
@@ -444,7 +475,7 @@ function ProductDetailPage() {
                 {/* Description Sections Content */}
                 {product.descriptionSections &&
                   product.descriptionSections.map((section, idx) => (
-                    <div key={idx} id={`section-${idx}`} className="mb-8 border-t border-gray-200 pt-6">
+                    <div key={idx} id={`section-${idx}`} className="mb-8">
                       <h3 className="text-xl font-semibold mb-4 text-gray-900">
                         {section.title}
                       </h3>
@@ -459,7 +490,7 @@ function ProductDetailPage() {
               {/* Expand/Collapse Button */}
               <button
                 onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                className="mt-4 w-full text-center text-blue-600 hover:text-blue-800 font-semibold text-sm flex items-center justify-center gap-2 py-2 border-t border-gray-200"
+                className="mt-4 w-full text-center text-black font-bold text-sm flex items-center justify-center gap-2 py-2 border-t border-gray-200 hover:underline"
               >
                 {descriptionExpanded ? (
                   <>
