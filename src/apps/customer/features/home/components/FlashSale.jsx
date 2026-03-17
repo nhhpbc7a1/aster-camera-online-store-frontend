@@ -5,6 +5,7 @@ import productService from "@/domains/product/services/productService";
 function FlashSale() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [displayProducts, setDisplayProducts] = useState([]);
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
@@ -36,11 +37,50 @@ function FlashSale() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    // Calculate number of products to display based on screen size
+    const calculateProductsCount = () => {
+      const width = window.innerWidth;
+      let count = 6; // default for 6 columns (desktop)
+      
+      if (width <= 640) {
+        // Mobile: 2 columns = 4 products (2 rows)
+        count = 4;
+      } else if (width <= 1024) {
+        // Tablet: 3 columns = 6 products (2 rows)
+        count = 6;
+      } else if (width <= 1280) {
+        // Small desktop: 4 columns = 4 products
+        count = 4;
+      } else {
+        // Large desktop: 6 columns = 6 products
+        count = 6;
+      }
+      
+      return count;
+    };
+
+    const updateDisplayProducts = () => {
+      const count = calculateProductsCount();
+      setDisplayProducts(products.slice(0, count));
+    };
+
+    updateDisplayProducts();
+    
+    const handleResize = () => {
+      updateDisplayProducts();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [products]);
+
   const loadFlashSaleProducts = async () => {
     try {
       setLoading(true);
+      // Load more products to have enough for all breakpoints
       const data = await productService.getFlashSaleProducts();
-      setProducts(data.slice(0, 6));
+      setProducts(data);
     } catch (err) {
       console.error("Error loading flash sale products:", err);
     } finally {
@@ -58,17 +98,17 @@ function FlashSale() {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {loading ? (
           Array(6)
             .fill(0)
             .map((_, i) => <ProductCard key={i} product={null} />)
-        ) : products.length === 0 ? (
-          <div className="col-span-6 text-center py-12 text-gray-500">
+        ) : displayProducts.length === 0 ? (
+          <div className="col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-6 text-center py-12 text-gray-500">
             No flash sale products available
           </div>
         ) : (
-          products.map((product) => (
+          displayProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}

@@ -295,19 +295,19 @@ function ProductDetailPage() {
 
           {/* Price */}
           <div className="mb-6">
-            <div className="flex items-center gap-4">
-              <span className="text-4xl font-bold text-black">
+            <div className="flex items-center gap-4 max-[850px]:flex-col max-[850px]:items-start">
+              <span className="text-4xl font-bold text-black max-[850px]:text-3xl">
                 {formatCurrency(product.salePrice || product.price)}
               </span>
               {product.salePrice && product.salePrice < product.price && (
-                <>
-                  <span className="text-2xl text-gray-400 line-through">
+                <div className="flex items-center gap-4 max-[850px]:flex-col max-[850px]:items-start">
+                  <span className="text-2xl text-gray-400 line-through max-[850px]:text-xl">
                     {formatCurrency(product.price)}
                   </span>
                   <span className="bg-black-500 text-white px-3 py-1 rounded">
                     -{product.discount}%
                   </span>
-                </>
+                </div>
               )}
             </div>
           </div>
