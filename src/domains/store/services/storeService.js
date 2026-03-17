@@ -8,7 +8,6 @@ const storeService = {
       const response = await storeApi.getAllStores(filters);
       return response.data;
     } catch (error) {
-      console.error("Error fetching stores:", error);
       throw error;
     }
   },
@@ -19,7 +18,6 @@ const storeService = {
       const response = await storeApi.getStoreById(storeId);
       return response.data;
     } catch (error) {
-      console.error("Error fetching store:", error);
       throw error;
     }
   },
@@ -30,7 +28,6 @@ const storeService = {
       const response = await storeApi.createStore(storeData);
       return response.data;
     } catch (error) {
-      console.error("Error creating store:", error);
       throw error;
     }
   },
@@ -41,7 +38,6 @@ const storeService = {
       const response = await storeApi.updateStore(storeId, storeData);
       return response.data;
     } catch (error) {
-      console.error("Error updating store:", error);
       throw error;
     }
   },
@@ -52,7 +48,6 @@ const storeService = {
       const response = await storeApi.deleteStore(storeId);
       return response.data;
     } catch (error) {
-      console.error("Error deleting store:", error);
       throw error;
     }
   },

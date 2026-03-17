@@ -11,11 +11,6 @@ const PlanModal = ({ blocking = true, onClose = null }) => {
   const navigate = useNavigate();
   const [subscribingPlanId, setSubscribingPlanId] = useState(null);
 
-  console.log('availablePlans', availablePlans);
-  console.log('loading', loading);
-  console.log('plan', plan);
-  console.log('refreshPlan', refreshPlan);
-
   const userRoles = user?.roles || [];
   const userType = userRoles.some(r => r.toUpperCase() === 'SUPPLIER') ? 'supplier' : 'seller';
   const planPath = `/${userType}/plan`;
@@ -53,7 +48,6 @@ const PlanModal = ({ blocking = true, onClose = null }) => {
       }
     } catch (error) {
       alert('Failed to subscribe: ' + (error.response?.data?.message || error.message || 'Unknown error'));
-      console.error('Subscribe error:', error);
     } finally {
       setSubscribingPlanId(null);
     }

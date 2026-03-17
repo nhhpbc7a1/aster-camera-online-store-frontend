@@ -16,7 +16,7 @@ function CategoryNavbar() {
       const data = await categoryService.getCategories();
       setCategories(data);
     } catch (err) {
-      console.error("Error loading categories:", err);
+      // no-op
     } finally {
       setLoading(false);
     }

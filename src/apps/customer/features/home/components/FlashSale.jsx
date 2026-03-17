@@ -82,7 +82,7 @@ function FlashSale() {
       const data = await productService.getFlashSaleProducts();
       setProducts(data);
     } catch (err) {
-      console.error("Error loading flash sale products:", err);
+      // no-op
     } finally {
       setLoading(false);
     }

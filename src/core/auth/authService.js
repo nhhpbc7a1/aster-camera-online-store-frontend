@@ -19,19 +19,13 @@ class AuthService {
     // Login user (Admin only)
     async login(email, password) {
         try {
-            console.log('API Call: POST /auth/login', { email, password: '***' });
-
             const response = await apiClient.post('/auth/login', {
                 email,
                 password
             });
 
-            console.log('API Response:', response.data);
-
             if (response.data?.data) {
                 const { accessToken, user } = response.data.data;
-
-                console.log('Login successful, storing token and user info.', { accessToken, user });
 
                 // Store token
                 if (accessToken) {
@@ -72,7 +66,6 @@ class AuthService {
                 message: 'Invalid response format',
             };
         } catch (error) {
-            console.error('🚨 Login Error:', error);
             return handleApiError(error);
         }
     }
@@ -81,8 +74,6 @@ class AuthService {
     async logout() {
         try {
             await apiClient.post('/auth/logout');
-        } catch (e) {
-            console.error('Logout error:', e);
         } finally {
             localStorage.removeItem('authToken');
             localStorage.removeItem('userInfo');
@@ -98,7 +89,6 @@ class AuthService {
     getCurrentUser() {
         const userInfo = localStorage.getItem('userInfo');
         if (!userInfo) {
-            console.log('getCurrentUser() - No user info in localStorage');
             return null;
         }
         
@@ -113,7 +103,6 @@ class AuthService {
             }
         }
         
-        console.log('getCurrentUser() - Retrieved user:', parsedUser);
         return parsedUser;
     }
 

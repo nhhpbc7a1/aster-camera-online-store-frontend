@@ -30,7 +30,7 @@ function CartPage() {
     try {
       await removeFromCart(cartItemId);
     } catch (err) {
-      console.error("Error removing item:", err);
+      // no-op (UI state is handled by context)
     }
   };
 
@@ -38,7 +38,7 @@ function CartPage() {
     try {
       await updateCartItem(cartItemId, newQuantity);
     } catch (err) {
-      console.error("Error updating quantity:", err);
+      // no-op (UI state is handled by context)
     }
   };
 
@@ -145,17 +145,11 @@ function CartPage() {
       setSuccessOrder(newOrder);
       setStep("success");
     } catch (err) {
-      console.error("Error placing order:", err);
       const errorMessage =
         err.response?.data?.message ||
         err.message ||
         "Đặt hàng thất bại. Vui lòng thử lại.";
       setError(errorMessage);
-
-      // Log full error for debugging
-      if (err.response?.data) {
-        console.error("Full error response:", err.response.data);
-      }
     } finally {
       setPlacing(false);
     }

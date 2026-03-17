@@ -8,7 +8,6 @@ const reviewService = {
       // Using mock data for now
       return mockReviews;
     } catch (error) {
-      console.error("Error fetching reviews:", error);
       throw error;
     }
   },
@@ -22,7 +21,6 @@ const reviewService = {
       }
       return review;
     } catch (error) {
-      console.error("Error fetching review:", error);
       throw error;
     }
   },
@@ -33,7 +31,6 @@ const reviewService = {
       const response = await reviewApi.createReview(reviewData);
       return response;
     } catch (error) {
-      console.error("Error creating review:", error);
       throw error;
     }
   },
@@ -44,7 +41,6 @@ const reviewService = {
       const response = await reviewApi.updateReview(reviewId, reviewData);
       return response;
     } catch (error) {
-      console.error("Error updating review:", error);
       throw error;
     }
   },
@@ -55,7 +51,6 @@ const reviewService = {
       const response = await reviewApi.deleteReview(reviewId);
       return response;
     } catch (error) {
-      console.error("Error deleting review:", error);
       throw error;
     }
   },

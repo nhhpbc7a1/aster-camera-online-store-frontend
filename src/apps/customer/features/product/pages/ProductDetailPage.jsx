@@ -46,7 +46,6 @@ function ProductDetailPage() {
       setRelatedProducts(related);
     } catch (err) {
       setError(err.message);
-      console.error("Error loading product:", err);
     } finally {
       setLoading(false);
     }
@@ -58,7 +57,7 @@ function ProductDetailPage() {
       setAddedToCart(true);
       setTimeout(() => setAddedToCart(false), 3000);
     } catch (err) {
-      console.error("Error adding to cart:", err);
+      // no-op (UI state handled by CartContext)
     }
   };
 

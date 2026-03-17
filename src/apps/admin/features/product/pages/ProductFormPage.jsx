@@ -90,7 +90,7 @@ function ProductFormPage() {
         setSubcategories(selectedCategory?.subcategories || []);
       }
     } catch (err) {
-      console.error("Error loading categories:", err);
+      // no-op
     }
   };
 
@@ -128,7 +128,6 @@ function ProductFormPage() {
       });
       setImagePreview(product.image);
     } catch (err) {
-      console.error("Error loading product:", err);
       alert("Không thể tải sản phẩm!");
       navigate("/admin/products");
     } finally {
@@ -308,10 +307,10 @@ function ProductFormPage() {
           if (isValidSubcategory) {
             validSubcategoryId = subcategoryIdValue;
           } else {
-            console.warn('Subcategory ID', subcategoryIdValue, 'does not belong to category', categoryIdValue);
+            // no-op
           }
         } else {
-          console.warn('Invalid subcategoryId value:', formData.subcategoryId);
+          // no-op
         }
       }
 
@@ -347,7 +346,6 @@ function ProductFormPage() {
 
       navigate("/admin/products");
     } catch (err) {
-      console.error("Error saving product:", err);
       alert("Không thể lưu sản phẩm: " + (err.message || "Lỗi không xác định"));
     }
   };

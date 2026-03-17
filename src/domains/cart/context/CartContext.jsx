@@ -29,7 +29,6 @@ export const CartProvider = ({ children }) => {
       setError(null);
     } catch (err) {
       setError(err.message);
-      console.error("Error initializing cart:", err);
     } finally {
       setLoading(false);
     }
@@ -45,7 +44,6 @@ export const CartProvider = ({ children }) => {
       return updatedCart;
     } catch (err) {
       setError(err.message);
-      console.error("Error adding to cart:", err);
       throw err;
     } finally {
       setLoading(false);
@@ -65,7 +63,6 @@ export const CartProvider = ({ children }) => {
       return updatedCart;
     } catch (err) {
       setError(err.message);
-      console.error("Error updating cart item:", err);
       throw err;
     } finally {
       setLoading(false);
@@ -82,7 +79,6 @@ export const CartProvider = ({ children }) => {
       return updatedCart;
     } catch (err) {
       setError(err.message);
-      console.error("Error removing from cart:", err);
       throw err;
     } finally {
       setLoading(false);
@@ -99,7 +95,6 @@ export const CartProvider = ({ children }) => {
       return updatedCart;
     } catch (err) {
       setError(err.message);
-      console.error("Error clearing cart:", err);
       throw err;
     } finally {
       setLoading(false);

@@ -48,7 +48,7 @@ function AdminReviewPage() {
       ];
       setReviews(mockReviews);
     } catch (err) {
-      console.error("Error loading reviews:", err);
+      // no-op
     } finally {
       setLoading(false);
     }

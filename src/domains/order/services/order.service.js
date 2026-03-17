@@ -7,7 +7,6 @@ const orderService = {
       const response = await orderApi.getAllOrders(filters);
       return response.data;
     } catch (error) {
-      console.error("Error fetching orders:", error);
       throw error;
     }
   },
@@ -18,7 +17,6 @@ const orderService = {
       const response = await orderApi.getUserOrders(userId);
       return response.data;
     } catch (error) {
-      console.error("Error fetching user orders:", error);
       throw error;
     }
   },
@@ -29,7 +27,6 @@ const orderService = {
       const response = await orderApi.getOrderById(orderId);
       return response.data;
     } catch (error) {
-      console.error("Error fetching order:", error);
       throw error;
     }
   },
@@ -40,7 +37,6 @@ const orderService = {
       const response = await orderApi.createOrder(orderData);
       return response.data;
     } catch (error) {
-      console.error("Error creating order:", error);
       throw error;
     }
   },
@@ -51,7 +47,6 @@ const orderService = {
       const response = await orderApi.updateOrderStatus(orderId, status);
       return response.data;
     } catch (error) {
-      console.error("Error updating order status:", error);
       throw error;
     }
   },
@@ -62,7 +57,6 @@ const orderService = {
       const response = await orderApi.cancelOrder(orderId);
       return response.data;
     } catch (error) {
-      console.error("Error cancelling order:", error);
       throw error;
     }
   },
@@ -73,7 +67,6 @@ const orderService = {
       const response = await orderApi.trackOrder(trackingNumber);
       return response.data;
     } catch (error) {
-      console.error("Error tracking order:", error);
       throw error;
     }
   },

@@ -58,8 +58,6 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             if (onLogin) {
                 await onLogin(formData);
             } else {
-                // Default behavior - just log for now
-                console.log("Login attempt:", formData);
                 // Simulate API call
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
@@ -223,7 +221,6 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 // Handle forgot password
-                                console.log("Forgot password clicked");
                             }}
                             className="text-black font-semibold hover:underline text-sm"
                         >

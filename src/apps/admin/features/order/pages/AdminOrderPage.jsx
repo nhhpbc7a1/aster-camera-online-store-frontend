@@ -21,7 +21,6 @@ function AdminOrderPage() {
       const data = await orderService.getAllOrders();
       setOrders(data);
     } catch (err) {
-      console.error("Error loading orders:", err);
       alert("Không thể tải danh sách đơn hàng!");
     } finally {
       setLoading(false);
@@ -40,7 +39,6 @@ function AdminOrderPage() {
       }
       alert(`Đơn hàng đã được cập nhật sang trạng thái: ${getStatusLabel(newStatus)}`);
     } catch (err) {
-      console.error("Error updating order status:", err);
       alert("Không thể cập nhật trạng thái đơn hàng");
     }
   };
@@ -275,7 +273,6 @@ Trân trọng,
       
       setShowEmailModal(false);
     } catch (err) {
-      console.error("Error sending email:", err);
       alert("Không thể gửi email. Vui lòng thử lại.");
     } finally {
       setEmailSending(false);

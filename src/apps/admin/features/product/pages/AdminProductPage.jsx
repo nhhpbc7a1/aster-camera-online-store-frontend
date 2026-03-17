@@ -28,7 +28,7 @@ function AdminProductPage() {
       const data = await productService.getProducts();
       setProducts(data);
     } catch (err) {
-      console.error("Error loading products:", err);
+      // no-op
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ function AdminProductPage() {
       const data = await categoryService.getCategories();
       setCategories(data);
     } catch (err) {
-      console.error("Error loading categories:", err);
+      // no-op
     }
   };
 
@@ -51,7 +51,6 @@ function AdminProductPage() {
         // Reload products list
         await loadProducts();
       } catch (err) {
-        console.error("Error deleting product:", err);
         alert("Không thể xóa sản phẩm: " + (err.message || "Lỗi không xác định"));
       }
     }
@@ -68,7 +67,6 @@ function AdminProductPage() {
       alert("Sản phẩm đã được sao chép thành công!");
       await loadProducts();
     } catch (err) {
-      console.error("Error duplicating product:", err);
       alert("Không thể sao chép sản phẩm: " + (err.message || "Lỗi không xác định"));
     }
   };

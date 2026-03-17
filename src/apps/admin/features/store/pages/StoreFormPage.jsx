@@ -45,7 +45,6 @@ function StoreFormPage() {
         image: data.image || "",
       });
     } catch (err) {
-      console.error("Error loading store:", err);
       alert("Không thể tải thông tin cửa hàng!");
       navigate("/admin/stores");
     } finally {
@@ -118,7 +117,6 @@ function StoreFormPage() {
       }
       navigate("/admin/stores");
     } catch (err) {
-      console.error("Error saving store:", err);
       alert(
         "Không thể lưu cửa hàng: " +
           (err.response?.data?.message || err.message || "Lỗi không xác định")

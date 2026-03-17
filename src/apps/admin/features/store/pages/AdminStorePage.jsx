@@ -20,7 +20,6 @@ function AdminStorePage() {
       const storesData = await storeService.getAllStores();
       setStores(storesData);
     } catch (err) {
-      console.error("Error loading stores:", err);
       alert("Không thể tải danh sách cửa hàng");
     } finally {
       setLoading(false);
@@ -34,7 +33,6 @@ function AdminStorePage() {
         alert("Cửa hàng đã được xóa!");
         await loadStores();
       } catch (err) {
-        console.error("Error deleting store:", err);
         alert("Không thể xóa cửa hàng: " + (err.message || "Lỗi không xác định"));
       }
     }

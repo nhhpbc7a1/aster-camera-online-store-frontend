@@ -26,7 +26,7 @@ function AdminCategoryPage() {
       setCategories(categoriesData);
       setProducts(productsData);
     } catch (err) {
-      console.error("Error loading data:", err);
+      // no-op
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,6 @@ function AdminCategoryPage() {
         alert("Danh mục đã được xóa thành công!");
         await loadData();
       } catch (err) {
-        console.error("Error deleting category:", err);
         alert(
           "Không thể xóa danh mục: " +
             (err.response?.data?.message || err.message || "Lỗi không xác định")

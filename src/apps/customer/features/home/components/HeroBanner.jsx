@@ -40,7 +40,6 @@ function HeroBanner() {
 
                 setSlides(slideData);
             } catch (error) {
-                console.error("Error loading top products for hero banner:", error);
                 // Fallback to empty array or keep loading
                 setSlides([]);
             } finally {

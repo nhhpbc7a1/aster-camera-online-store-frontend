@@ -37,7 +37,6 @@ function CategoryFormPage() {
       });
       setSubcategories(data.subcategories || []);
     } catch (err) {
-      console.error("Error loading category:", err);
       alert("Không thể tải thông tin danh mục!");
       navigate("/admin/categories");
     } finally {
@@ -99,7 +98,6 @@ function CategoryFormPage() {
       }
       navigate("/admin/categories");
     } catch (err) {
-      console.error("Error saving category:", err);
       alert(
         "Không thể lưu danh mục: " +
           (err.response?.data?.message || err.message || "Lỗi không xác định")
@@ -135,7 +133,6 @@ function CategoryFormPage() {
       setNewSubcategory({ name: "", slug: "" });
       alert("Thêm danh mục con thành công!");
     } catch (err) {
-      console.error("Error adding subcategory:", err);
       alert(
         "Không thể thêm danh mục con: " +
           (err.response?.data?.message || err.message || "Lỗi không xác định")
@@ -166,7 +163,6 @@ function CategoryFormPage() {
       setEditingSubcategory(null);
       alert("Cập nhật danh mục con thành công!");
     } catch (err) {
-      console.error("Error updating subcategory:", err);
       alert(
         "Không thể cập nhật danh mục con: " +
           (err.response?.data?.message || err.message || "Lỗi không xác định")
@@ -184,7 +180,6 @@ function CategoryFormPage() {
       setSubcategories(subcategories.filter((sub) => sub.id !== subcategoryId));
       alert("Xóa danh mục con thành công!");
     } catch (err) {
-      console.error("Error deleting subcategory:", err);
       alert(
         "Không thể xóa danh mục con: " +
           (err.response?.data?.message || err.message || "Lỗi không xác định")

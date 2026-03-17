@@ -7,7 +7,6 @@ const categoryService = {
       const response = await categoryApi.getAllCategories();
       return response.data;
     } catch (error) {
-      console.error("Error fetching categories:", error);
       throw error;
     }
   },
@@ -18,7 +17,6 @@ const categoryService = {
       const response = await categoryApi.getCategoryById(categoryId);
       return response.data;
     } catch (error) {
-      console.error("Error fetching category:", error);
       throw error;
     }
   },
@@ -29,7 +27,6 @@ const categoryService = {
       const response = await categoryApi.getCategoryBySlug(slug);
       return response.data;
     } catch (error) {
-      console.error("Error fetching category:", error);
       throw error;
     }
   },
@@ -40,7 +37,6 @@ const categoryService = {
       const response = await categoryApi.createCategory(categoryData);
       return response.data;
     } catch (error) {
-      console.error("Error creating category:", error);
       throw error;
     }
   },
@@ -51,7 +47,6 @@ const categoryService = {
       const response = await categoryApi.updateCategory(categoryId, categoryData);
       return response.data;
     } catch (error) {
-      console.error("Error updating category:", error);
       throw error;
     }
   },
@@ -62,7 +57,6 @@ const categoryService = {
       const response = await categoryApi.deleteCategory(categoryId);
       return response;
     } catch (error) {
-      console.error("Error deleting category:", error);
       throw error;
     }
   },
@@ -73,7 +67,6 @@ const categoryService = {
       const response = await categoryApi.createSubcategory(subcategoryData);
       return response.data;
     } catch (error) {
-      console.error("Error creating subcategory:", error);
       throw error;
     }
   },
@@ -84,7 +77,6 @@ const categoryService = {
       const response = await categoryApi.updateSubcategory(subcategoryId, subcategoryData);
       return response.data;
     } catch (error) {
-      console.error("Error updating subcategory:", error);
       throw error;
     }
   },
@@ -95,7 +87,6 @@ const categoryService = {
       const response = await categoryApi.deleteSubcategory(subcategoryId);
       return response;
     } catch (error) {
-      console.error("Error deleting subcategory:", error);
       throw error;
     }
   },

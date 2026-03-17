@@ -10,8 +10,8 @@ const LogoutButton = ({ className = "" }) => {
     try {
       await logout();
       navigate('/');
-    } catch (error) {
-      console.error('Logout failed:', error);
+    } catch (_) {
+      // no-op
     }
   };
 

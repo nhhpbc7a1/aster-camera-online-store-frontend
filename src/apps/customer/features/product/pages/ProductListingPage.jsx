@@ -93,7 +93,6 @@ function ProductListingPage() {
       const categoriesData = await categoryService.getCategories();
       setCategories(categoriesData || mockCategories);
     } catch (err) {
-      console.error("Error loading categories:", err);
       setCategories(mockCategories);
     }
   };
@@ -106,8 +105,6 @@ function ProductListingPage() {
 
       let productsData;
       const searchTerm = searchParams.get("q");
-
-      console.log('🔍 Loading products:', { categorySlug, searchTerm });
 
       if (categorySlug) {
         // Try to find as category first
@@ -132,7 +129,7 @@ function ProductListingPage() {
           try {
             categoryData = await categoryService.getCategoryBySlug(categorySlug);
           } catch (err) {
-            console.warn('Category not found in API:', err);
+            // no-op
           }
         }
 
@@ -169,8 +166,6 @@ function ProductListingPage() {
         setCategory(null);
       }
 
-      console.log('📦 Loaded products count:', productsData?.length || 0);
-
       // Use the data from API (even if empty)
       setAllProducts(productsData || []);
 
@@ -197,8 +192,6 @@ function ProductListingPage() {
 
       applyFilters(productsData || []);
     } catch (err) {
-      console.error("Error loading products:", err);
-
       // On error, show empty state instead of mock data
       setAllProducts([]);
       setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");

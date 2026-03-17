@@ -16,18 +16,8 @@ import PlanModal from '@/public/guards/PlanModal.jsx';
  * - children: React components to render if plan check passes
  */
 const PlanGuard = ({ children, requireActive = true }) => {
-  console.log('🔒 [PlanGuard] Rendering...', { requireActive });
-
   const { user } = useAuth();
   const { hasActivePlan, isExpired, loading } = usePlan();
-
-  console.log('🔒 [PlanGuard] State:', {
-    hasActivePlan,
-    isExpired,
-    loading,
-    userId: user?.userId,
-    roles: user?.roles
-  });
 
   // ✅ FIX: hasActivePlan is already a boolean from context, not a function
   const hasActive = hasActivePlan === true;
@@ -38,20 +28,15 @@ const PlanGuard = ({ children, requireActive = true }) => {
     ['SELLER', 'SUPPLIER'].includes(role.toUpperCase())
   );
 
-  console.log('🔒 [PlanGuard] Needs plan:', needsplan);
-
   // Don't block if:
   // 1. Not a seller/supplier (Customer/Admin don't need plan)
   // 2. Still loading plan data
   if (!needsplan || loading) {
-    console.log('🔒 [PlanGuard] Allowing access - No plan needed or still loading');
     return children;
   }
 
   // Check if plan is required and user doesn't have active plan
   if (requireActive && !hasActive) {
-    console.log('[PlanGuard] ⛔ Blocking access - No active plan');
-
     // Show blocking modal overlay on top of the page
     return (
       <>
@@ -67,7 +52,6 @@ const PlanGuard = ({ children, requireActive = true }) => {
   }
 
   // User has active plan or doesn't require one
-  console.log('🔒 [PlanGuard] ✅ Allowing access - Has active plan');
   return children;
 };
 

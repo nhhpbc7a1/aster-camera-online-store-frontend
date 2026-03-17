@@ -19,7 +19,7 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false,
     try {
       await addToCart(product, 1);
     } catch (err) {
-      console.error("Error adding to cart:", err);
+      // no-op (UI state handled by CartContext)
     }
   };
 

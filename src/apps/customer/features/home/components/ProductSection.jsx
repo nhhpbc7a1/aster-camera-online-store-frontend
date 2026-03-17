@@ -56,7 +56,7 @@ function ProductSection({ title }) {
       const data = await productService.getFeaturedProducts(6);
       setProducts(data);
     } catch (err) {
-      console.error("Error loading products:", err);
+      // no-op
     } finally {
       setLoading(false);
     }

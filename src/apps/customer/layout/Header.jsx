@@ -31,7 +31,7 @@ function Header() {
         const data = await categoryService.getCategories();
         setCategories(data);
       } catch (err) {
-        console.error("Error loading categories:", err);
+        // no-op
       }
     };
     loadCategories();
@@ -303,7 +303,6 @@ function Header() {
                                     [category.id]: subs
                                   }));
                                 } catch (err) {
-                                  console.error("Error loading subcategories:", err);
                                   // If category has subcategories in the initial data, use that
                                   if (category.subcategories) {
                                     setSubcategoriesMap(prev => ({

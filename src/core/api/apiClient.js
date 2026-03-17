@@ -7,7 +7,6 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 
-console.log('API_BASE_URL', API_BASE_URL);
 // Tạo axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -27,16 +26,6 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (import.meta.env.DEV) {
-      console.log(
-        `[API Request] ${config.method?.toUpperCase()} ${config.url}`,
-        {
-          params: config.params,
-          data: config.data
-        }
-      );
-    }
-
     return config;
   },
   (error) => Promise.reject(error)
@@ -45,23 +34,9 @@ apiClient.interceptors.request.use(
 // Response interceptor - Xử lý response và error
 apiClient.interceptors.response.use(
   (response) => {
-    if (import.meta.env.DEV) {
-      console.log(
-        `[API Response] ${response.status} ${response.config.url}`,
-        response.data
-      );
-    }
-
     return response;
   },
   (error) => {
-    if (import.meta.env.DEV) {
-      console.error(
-        `[API Error] ${error.response?.status} ${error.config?.url}`,
-        error.response?.data || error.message
-      );
-    }
-
     return Promise.reject(error);
   }
 );

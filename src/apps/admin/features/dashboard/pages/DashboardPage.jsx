@@ -123,7 +123,7 @@ const DashboardPage = () => {
       setProducts(productsData);
       setCategories(categoriesData);
     } catch (err) {
-      console.error('Error loading dashboard data:', err);
+      // no-op
     } finally {
       setLoading(false);
     }

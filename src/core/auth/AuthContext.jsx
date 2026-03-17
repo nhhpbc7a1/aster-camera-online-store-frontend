@@ -33,8 +33,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const payload = jwtDecode(token);
             return payload.exp * 1000 < Date.now();
-        } catch (error) {
-            console.error('Error decoding JWT:', error);
+        } catch (_) {
             return true;
         }
     };
@@ -74,8 +73,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
                 setIsAuthenticated(false);
             }
-        } catch (error) {
-            console.error("Error hydrating auth:", error);
+        } catch (_) {
             authService.logout();
             setUser(null);
             setIsAuthenticated(false);
@@ -131,8 +129,7 @@ export const AuthProvider = ({ children }) => {
                         return; // prevent finally at end from double-setting
                     }
                 }
-            } catch (error) {
-                console.error('Error initializing auth:', error);
+            } catch (_) {
                 authService.logout();
             } finally {
                 setLoading(false);
@@ -163,7 +160,6 @@ export const AuthProvider = ({ children }) => {
                 })();
                 if (!userInfo) userInfo = authService.getCurrentUser();
 
-                console.log('AuthContext - Setting user after login:', userInfo);
                 setUser(userInfo);
                 setIsAuthenticated(true);
                 // do not block UI
@@ -183,9 +179,7 @@ export const AuthProvider = ({ children }) => {
                                 setUser(updatedUser);
                                 localStorage.setItem('userInfo', JSON.stringify(updatedUser));
                             }
-                        }).catch(err => {
-                            console.error('Failed to load business profile after login:', err);
-                        });
+                        }).catch(() => {});
                     }
                 }
 
