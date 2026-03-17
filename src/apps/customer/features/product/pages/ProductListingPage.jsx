@@ -71,6 +71,23 @@ function ProductListingPage() {
     }
   }, [categorySlug, searchParams, categories]);
 
+  // Auto-expand category if subcategory is active
+  useEffect(() => {
+    if (categorySlug && categories.length > 0) {
+      for (const cat of categories) {
+        if (cat.subcategories) {
+          const hasActiveSubcategory = cat.subcategories.some(
+            (subcat) => categorySlug === subcat.slug
+          );
+          if (hasActiveSubcategory && expandedCategory !== cat.id) {
+            setExpandedCategory(cat.id);
+            break;
+          }
+        }
+      }
+    }
+  }, [categorySlug, categories]);
+
   const loadCategories = async () => {
     try {
       const categoriesData = await categoryService.getCategories();
@@ -362,55 +379,75 @@ function ProductListingPage() {
               </button>
 
               {/* Main Categories */}
-              {categories.map((cat) => (
-                <div key={cat.id}>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => navigate(`/products/category/${cat.slug}`)}
-                      className={`flex-1 flex items-center text-left px-3 py-2 rounded transition text-sm ${categorySlug === cat.slug
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                    >
-                      <span>{cat.name}</span>
-                    </button>
-                    {cat.subcategories && cat.subcategories.length > 0 && (
+              {categories.map((cat) => {
+                // Check if current category is active
+                const isCategoryActive = categorySlug === cat.slug;
+                
+                // Check if any subcategory is active
+                const hasActiveSubcategory = cat.subcategories?.some(
+                  (subcat) => categorySlug === subcat.slug
+                );
+                
+                // Check if category should be expanded (has active subcategory or manually expanded)
+                const shouldExpand = expandedCategory === cat.id || hasActiveSubcategory;
+                
+                return (
+                  <div key={cat.id}>
+                    <div className="flex items-center gap-1">
                       <button
-                        onClick={() => {
-                          setExpandedCategory(
-                            expandedCategory === cat.id ? null : cat.id,
-                          );
-                        }}
-                        className="px-2 py-2 text-gray-600 hover:bg-gray-100 rounded transition"
+                        onClick={() => navigate(`/products/category/${cat.slug}`)}
+                        className={`flex-1 flex items-center text-left px-3 py-2 rounded transition text-sm ${isCategoryActive || hasActiveSubcategory
+                          ? "bg-blue-50 text-blue-600 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
+                          }`}
                       >
-                        <i
-                          className={`fa-solid fa-chevron-down text-xs transition-transform ${expandedCategory === cat.id ? "rotate-180" : ""
-                            }`}
-                        ></i>
+                        <span>{cat.name}</span>
                       </button>
-                    )}
-                  </div>
+                      {cat.subcategories && cat.subcategories.length > 0 && (
+                        <button
+                          onClick={() => {
+                            setExpandedCategory(
+                              expandedCategory === cat.id ? null : cat.id,
+                            );
+                          }}
+                          className="px-2 py-2 text-gray-600 hover:bg-gray-100 rounded transition"
+                        >
+                          <i
+                            className={`fa-solid fa-chevron-down text-xs transition-transform ${shouldExpand ? "rotate-180" : ""
+                              }`}
+                          ></i>
+                        </button>
+                      )}
+                    </div>
 
-                  {/* Subcategories */}
-                  {expandedCategory === cat.id &&
-                    cat.subcategories &&
-                    cat.subcategories.length > 0 && (
-                      <div className="pl-4 space-y-1">
-                        {cat.subcategories.map((subcat) => (
-                          <button
-                            key={subcat.id}
-                            onClick={() =>
-                              navigate(`/products/category/${subcat.slug}`)
-                            }
-                            className="block w-full text-left px-3 py-2 rounded transition text-xs text-gray-600 hover:text-blue-600 hover:bg-gray-100"
-                          >
-                            {subcat.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                </div>
-              ))}
+                    {/* Subcategories */}
+                    {shouldExpand &&
+                      cat.subcategories &&
+                      cat.subcategories.length > 0 && (
+                        <div className="pl-4 space-y-1">
+                          {cat.subcategories.map((subcat) => {
+                            const isSubcategoryActive = categorySlug === subcat.slug;
+                            return (
+                              <button
+                                key={subcat.id}
+                                onClick={() =>
+                                  navigate(`/products/category/${subcat.slug}`)
+                                }
+                                className={`block w-full text-left px-3 py-2 rounded transition text-xs ${
+                                  isSubcategoryActive
+                                    ? "bg-blue-50 text-blue-600 font-medium"
+                                    : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
+                                }`}
+                              >
+                                {subcat.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Price Filter */}

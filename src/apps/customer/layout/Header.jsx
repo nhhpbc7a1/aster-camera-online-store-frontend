@@ -15,6 +15,8 @@ function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
+  const [subcategoriesMap, setSubcategoriesMap] = useState({});
 
   // Check authentication status on mount
   useEffect(() => {
@@ -267,17 +269,81 @@ function Header() {
             <div className="px-4 py-2">
               <h3 className="font-semibold text-black mb-2 uppercase">Danh mục</h3>
               <div className="flex flex-col gap-1">
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/category/${category.slug}`}
-                    className="uppercase px-3 py-2 flex items-center justify-between hover:bg-gray-100 rounded transition text-sm font-semibold text-black"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <span>{category.name}</span>
-                    <i className="fa-solid fa-chevron-right text-xs"></i>
-                  </Link>
-                ))}
+                {categories.map((category) => {
+                  const isExpanded = expandedCategories.has(category.id);
+                  const subcategories = subcategoriesMap[category.id] || [];
+
+                  return (
+                    <div key={category.id}>
+                      <div className="flex items-center">
+                        <Link
+                          to={`/category/${category.slug}`}
+                          className="flex-1 uppercase px-3 py-2 flex items-center justify-between hover:bg-gray-100 rounded transition text-sm font-semibold text-black"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <span>{category.name}</span>
+                        </Link>
+                        <button
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            const newExpanded = new Set(expandedCategories);
+
+                            if (isExpanded) {
+                              newExpanded.delete(category.id);
+                            } else {
+                              newExpanded.add(category.id);
+                              // Load subcategories if not already loaded
+                              if (!subcategoriesMap[category.id]) {
+                                try {
+                                  // Try to get subcategories from category object or fetch category details
+                                  const categoryData = await categoryService.getCategoryById(category.id);
+                                  const subs = categoryData.subcategories || [];
+                                  setSubcategoriesMap(prev => ({
+                                    ...prev,
+                                    [category.id]: subs
+                                  }));
+                                } catch (err) {
+                                  console.error("Error loading subcategories:", err);
+                                  // If category has subcategories in the initial data, use that
+                                  if (category.subcategories) {
+                                    setSubcategoriesMap(prev => ({
+                                      ...prev,
+                                      [category.id]: category.subcategories
+                                    }));
+                                  }
+                                }
+                              }
+                            }
+
+                            setExpandedCategories(newExpanded);
+                          }}
+                          className="px-2 py-2 hover:bg-gray-100 rounded transition"
+                        >
+                          <i
+                            className={`fa-solid fa-chevron-right text-xs transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''
+                              }`}
+                          ></i>
+                        </button>
+                      </div>
+
+                      {/* Subcategories */}
+                      {isExpanded && subcategories.length > 0 && (
+                        <div className="ml-4 mt-1 mb-1 border-l-2 border-gray-200 pl-2">
+                          {subcategories.map((subcategory) => (
+                            <Link
+                              key={subcategory.id}
+                              to={`/products/category/${subcategory.slug}`}
+                              className="text-left block px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded transition"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {subcategory.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
