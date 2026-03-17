@@ -120,6 +120,8 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6">
+                    
+
                     {/* Error message */}
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -223,10 +225,19 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                                 // Handle forgot password
                                 console.log("Forgot password clicked");
                             }}
-                            className="text-blue-600 hover:text-blue-700 text-sm"
+                            className="text-black font-semibold hover:underline text-sm"
                         >
                             Quên mật khẩu?
                         </a>
+                    </div>
+
+                    {/* Demo credentials note */}
+                    <div className="mb-4 p-3 bg-[#E5F5E5] border border-[#447744] rounded-lg mt-3">
+                        <p className="text-xs text-[#447744] font-semibold mb-1">Demo Credentials:</p>
+                        <p className="text-xs text-[#447744]">
+                            <span className="font-semibold">Email:</span>admin@camerastore.com<br/>
+                            <span className="font-semibold">Mật khẩu:</span> admin123
+                        </p>
                     </div>
                 </form>
             </div>
