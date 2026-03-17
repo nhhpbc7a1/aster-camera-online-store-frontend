@@ -361,25 +361,25 @@ Trân trọng,
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 max-[850px]:p-4">
+      <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý Đơn hàng</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Đơn hàng</h1>
+          <p className="text-gray-600 mt-1 max-[850px]:text-sm">
             Quản lý tất cả đơn hàng ({orders.length})
           </p>
         </div>
         <button
           onClick={loadOrders}
-          className="btn btn-outline"
+          className="btn btn-outline max-[850px]:text-sm max-[850px]:px-3 max-[850px]:py-1"
         >
-          <i className="fa-solid fa-rotate mr-2"></i>
-          Làm mới
+          <i className="fa-solid fa-rotate mr-2 max-[850px]:mr-1"></i>
+          <span className="max-[850px]:hidden">Làm mới</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="text-center">
             <p className="text-sm text-gray-600">Tổng đơn</p>
@@ -401,31 +401,31 @@ Trân trọng,
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg shadow p-4 border border-purple-200">
+        <div className="bg-purple-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-purple-200 max-[850px]:hidden">
           <div className="text-center">
-            <p className="text-sm text-purple-700">Đã gửi</p>
-            <p className="text-2xl font-bold mt-1 text-purple-800">{stats.shipped}</p>
+            <p className="text-sm text-purple-700 max-[850px]:text-xs">Đã gửi</p>
+            <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-purple-800">{stats.shipped}</p>
           </div>
         </div>
 
-        <div className="bg-green-50 rounded-lg shadow p-4 border border-green-200">
+        <div className="bg-green-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-green-200 max-[850px]:hidden">
           <div className="text-center">
-            <p className="text-sm text-green-700">Đã giao</p>
-            <p className="text-2xl font-bold mt-1 text-green-800">{stats.delivered}</p>
+            <p className="text-sm text-green-700 max-[850px]:text-xs">Đã giao</p>
+            <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-green-800">{stats.delivered}</p>
           </div>
         </div>
 
-        <div className="bg-red-50 rounded-lg shadow p-4 border border-red-200">
+        <div className="bg-red-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-red-200 max-[850px]:hidden">
           <div className="text-center">
-            <p className="text-sm text-red-700">Đã hủy</p>
-            <p className="text-2xl font-bold mt-1 text-red-800">{stats.cancelled}</p>
+            <p className="text-sm text-red-700 max-[850px]:text-xs">Đã hủy</p>
+            <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-red-800">{stats.cancelled}</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow p-4 text-white">
+        <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow p-4 max-[850px]:p-2 text-white max-[850px]:hidden">
           <div className="text-center">
-            <p className="text-sm opacity-90">Doanh thu</p>
-            <p className="text-xl font-bold mt-1">
+            <p className="text-sm max-[850px]:text-xs opacity-90">Doanh thu</p>
+            <p className="text-xl max-[850px]:text-lg font-bold mt-1">
               {formatCurrency(stats.revenue)}
             </p>
           </div>
@@ -433,8 +433,8 @@ Trân trọng,
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6 border">
-        <label className="block text-sm font-semibold mb-2">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border">
+        <label className="block text-sm max-[850px]:text-xs font-semibold mb-2">
           <i className="fa-solid fa-search mr-2"></i>
           Tìm kiếm đơn hàng
         </label>
@@ -443,13 +443,13 @@ Trân trọng,
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Nhập mã đơn, tên khách hàng, email..."
-          className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
+          className="w-full border rounded-md px-3 py-2 max-[850px]:text-sm focus:outline-none focus:border-black"
         />
       </div>
 
       {/* Filter Tabs */}
-      <div className="mb-6 bg-white rounded-lg shadow border p-2">
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-6 max-[850px]:mb-4 bg-white rounded-lg shadow border p-2 max-[850px]:p-1">
+        <div className="flex flex-wrap gap-2 max-[850px]:gap-1">
           {[
             { value: "all", label: "Tất cả", count: stats.total },
             { value: "pending", label: "Chờ xử lý", count: stats.pending },
@@ -461,22 +461,24 @@ Trân trọng,
             <button
               key={tab.value}
               onClick={() => setFilter(tab.value)}
-              className={`px-4 py-2 rounded-md font-medium transition ${
+              className={`px-4 max-[850px]:px-2 py-2 max-[850px]:py-1 rounded-md font-medium max-[850px]:text-xs transition ${
                 filter === tab.value
                   ? "bg-black text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border"
               }`}
             >
-              {tab.label} ({tab.count})
+              <span className="max-[850px]:hidden">{tab.label} ({tab.count})</span>
+              <span className="min-[851px]:hidden">{tab.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[850px]:gap-4">
         {/* Orders List */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow overflow-hidden border">
+          {/* Desktop Table */}
+          <div className="bg-white rounded-lg shadow overflow-hidden border hidden lg:block">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
@@ -563,24 +565,75 @@ Trân trọng,
               </table>
             </div>
           </div>
+
+          {/* Mobile Card Layout */}
+          <div className="lg:hidden space-y-3">
+            {filteredOrders.length === 0 ? (
+              <div className="bg-white rounded-lg shadow p-6 border text-center text-gray-500">
+                <i className="fa-solid fa-receipt text-4xl mb-2 block text-gray-300"></i>
+                {searchTerm || filter !== "all"
+                  ? "Không tìm thấy đơn hàng"
+                  : "Chưa có đơn hàng nào"}
+              </div>
+            ) : (
+              filteredOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className={`bg-white rounded-lg shadow p-4 border cursor-pointer transition ${
+                    selectedOrder?.id === order.id ? "border-blue-500 bg-blue-50" : ""
+                  }`}
+                  onClick={() => setSelectedOrder(order)}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="font-semibold text-blue-600 text-sm">{order.orderNumber}</p>
+                      <p className="text-xs text-gray-500">{order.items.length} sản phẩm</p>
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
+                      <i className={`fa-solid ${getStatusIcon(order.status)}`}></i>
+                      {getStatusLabel(order.status)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div>
+                      <p className="font-semibold text-sm">{order.shippingAddress.fullName}</p>
+                      <p className="text-xs text-gray-600">
+                        {order.email || order.shippingAddress?.email || "N/A"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-blue-600">{formatCurrency(order.total)}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Order Details */}
         {selectedOrder ? (
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-4 border">
+          <div className="lg:col-span-1 max-[850px]:fixed max-[850px]:inset-0 max-[850px]:z-50 max-[850px]:bg-white max-[850px]:overflow-y-auto">
+            <div className="bg-white rounded-lg shadow p-6 max-[850px]:p-4 max-[850px]:rounded-none max-[850px]:shadow-none sticky top-4 max-[850px]:sticky max-[850px]:top-0 border max-[850px]:border-0">
               <div className="flex justify-between items-start mb-4 pb-4 border-b">
                 <div>
-                  <h2 className="text-lg font-bold">
+                  <h2 className="text-lg max-[850px]:text-base font-bold">
                     {selectedOrder.orderNumber}
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm max-[850px]:text-xs text-gray-600">
                     {new Date(selectedOrder.createdAt).toLocaleString("vi-VN")}
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="text-gray-500 hover:text-gray-700 transition"
+                  className="text-gray-500 hover:text-gray-700 transition max-[850px]:text-2xl"
                 >
                   <i className="fa-solid fa-xmark text-xl"></i>
                 </button>

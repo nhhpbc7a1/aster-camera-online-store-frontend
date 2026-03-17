@@ -33,10 +33,10 @@ const Header = ({
   }, []);
   return (
     <header className={`
-      bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6
+      bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 max-[850px]:px-4
       transition-all duration-300
       ${isCollapsed ? 'ml-20' : 'ml-64'}
-      lg:ml-0
+      lg:ml-0 max-[850px]:ml-0
     `}>
       {/* Left Section */}
       <div className="flex items-center gap-4">
@@ -48,22 +48,22 @@ const Header = ({
         </button>
 
         {/* Search */}
-        <div className="relative hidden md:block">
+        <div className="relative hidden md:block max-[850px]:block max-[850px]:flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="pl-10 pr-4 py-2 w-80 max-[850px]:w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 max-[850px]:gap-1">
         {/* Theme Toggle */}
         <button
           onClick={onToggleTheme}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors max-[850px]:hidden"
           title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
           {theme === 'light' ? (
@@ -74,7 +74,7 @@ const Header = ({
         </button>
 
         {/* Notifications */}
-        <div className="relative">
+        <div className="relative max-[850px]:hidden">
           <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
             <Bell className="w-5 h-5" />
           </button>
@@ -87,14 +87,14 @@ const Header = ({
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-2 max-[850px]:gap-1 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <User className="w-8 h-8 text-gray-400" />
+            <User className="w-8 h-8 max-[850px]:w-6 max-[850px]:h-6 text-gray-400" />
             <div className="hidden md:block text-left">
               <p className="text-sm font-medium text-gray-900">Admin User</p>
               <p className="text-xs text-gray-500">Administrator</p>
             </div>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4 max-[850px]:hidden text-gray-400" />
           </button>
 
           {/* Profile Dropdown */}

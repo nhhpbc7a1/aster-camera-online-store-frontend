@@ -105,8 +105,8 @@ function Footer() {
 
                 {/* Product Categories Grid */}
                 <div className="mb-10">
-                    {/* First row: 6 categories */}
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+                    {/* Desktop: Grid layout */}
+                    <div className="hidden md:grid grid-cols-6 gap-4 mb-4">
                         {categories.slice(0, 6).map((category) => (
                             <a
                                 key={category.id}
@@ -127,6 +127,37 @@ function Footer() {
                                 </div>
                             </a>
                         ))}
+                    </div>
+                    
+                    {/* Mobile: Horizontal scroll */}
+                    <div className="md:hidden overflow-x-auto -mx-4 px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        <style>{`
+                            .scrollbar-hide::-webkit-scrollbar {
+                                display: none;
+                            }
+                        `}</style>
+                        <div className="flex gap-4" style={{ width: 'max-content' }}>
+                            {categories.slice(0, 6).map((category) => (
+                                <a
+                                    key={category.id}
+                                    href={`/category/${category.slug}`}
+                                    className="relative flex-shrink-0 w-[200px] aspect-square rounded-lg overflow-hidden group cursor-pointer bg-gray-200"
+                                >
+                                    <img
+                                        src={category.image}
+                                        alt={category.name}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition">
+                                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                                            <h3 className="text-white font-semibold text-center text-sm">
+                                                {category.name}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

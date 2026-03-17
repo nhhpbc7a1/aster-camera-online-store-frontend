@@ -23,7 +23,7 @@ function CategoryNavbar() {
   };
 
   return (
-    <div className="bg-gray-200 border-t border-gray-300 shadow-sm">
+    <div className="bg-gray-200 border-t border-gray-300 shadow-sm max-[850px]:hidden">
       <div className="container mx-auto px-4 flex items-center text-sl font-semibold text-black py-1">
         {loading ? (
           <div>Loading categories...</div>

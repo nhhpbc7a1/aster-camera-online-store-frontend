@@ -286,25 +286,25 @@ function ProductFormPage() {
       let validSubcategoryId = null;
       if (formData.subcategoryId !== null && formData.subcategoryId !== undefined && formData.subcategoryId !== "") {
         // Parse subcategoryId - ensure we get the actual ID, not index
-        const subcategoryIdValue = typeof formData.subcategoryId === 'number' 
-          ? formData.subcategoryId 
+        const subcategoryIdValue = typeof formData.subcategoryId === 'number'
+          ? formData.subcategoryId
           : parseInt(String(formData.subcategoryId), 10);
-        
+
         // Check if subcategoryId is valid number and belongs to current category
         if (!isNaN(subcategoryIdValue) && subcategoryIdValue > 0) {
-          const categoryIdValue = typeof formData.categoryId === 'number' 
-            ? formData.categoryId 
+          const categoryIdValue = typeof formData.categoryId === 'number'
+            ? formData.categoryId
             : parseInt(String(formData.categoryId), 10);
-          
+
           const selectedCategory = categories.find(
             (cat) => cat.id === categoryIdValue
           );
-          
+
           // Verify subcategory belongs to selected category by checking actual ID
           const isValidSubcategory = selectedCategory?.subcategories?.some(
             (sub) => sub.id === subcategoryIdValue
           );
-          
+
           if (isValidSubcategory) {
             validSubcategoryId = subcategoryIdValue;
           } else {

@@ -30,11 +30,16 @@ function TopBar() {
                 .scroll-content span {
                     flex-shrink: 0;
                 }
+                @media (max-width: 850px) {
+                    .topbar-container {
+                        justify-content: center;
+                    }
+                }
             `}</style>
 
-            <div className="container mx-auto flex justify-between items-center px-4 py-1">
-                <span className="font-semibold w-[300px]">CHẤT LƯỢNG - TẬN TÂM - UY TÍN</span>
-                <div className="scroll-container">
+            <div className="container mx-auto flex justify-between items-center px-4 py-1 topbar-container">
+                <span className="font-semibold w-[300px] max-[850px]:w-auto max-[850px]:mx-auto">CHẤT LƯỢNG - TẬN TÂM - UY TÍN</span>
+                <div className="scroll-container max-[850px]:hidden">
                     <div className="scroll-content">
                         {[...scrollItems, ...scrollItems].map((item, idx) => (
                             <span key={idx}>
@@ -45,7 +50,7 @@ function TopBar() {
                     </div>
                 </div>
 
-                <div className="flex gap-2 ml-4 flex-shrink-0 w-[200px]">
+                <div className="flex gap-2 ml-4 flex-shrink-0 w-[200px] max-[850px]:hidden text-end">
                     <a href="https://www.facebook.com/people/ASTER-Production/61585158583823/?locale=vi_VN" target="_blank" rel="noopener noreferrer">
                         <span className="w-8 h-6 flex items-center justify-center rounded-full bg-white text-blue-600 hover:scale-110 transition cursor-pointer">
                             <i className="fa-brands fa-facebook-f"></i>

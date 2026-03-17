@@ -1,7 +1,7 @@
 import { useCart } from "@/domains/cart/context/CartContext";
 import { formatCurrency } from "@/utils/currencyHelpers";
 
-function ProductCard({ product, showAddButton = false, showSelectButton = false }) {
+function ProductCard({ product, showAddButton = false, showSelectButton = false, marginBottom = 0 }) {
   const { addToCart, loading } = useCart();
 
   if (!product) {
@@ -25,7 +25,7 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false 
 
   return (
     <a href={`/product/${product.id}`}>
-      <div className="bg-white rounded-xl shadow p-4 hover:shadow-lg transition cursor-pointer relative text-center group">
+      <div className={`bg-white rounded-xl shadow p-4 hover:shadow-lg transition cursor-pointer relative text-center group mb-${marginBottom}`}>
         {/* Flash Sale badge */}
         {product.isFlashSale && (
           <div className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold z-10">
@@ -37,7 +37,7 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false 
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-35 object-cover hover:scale-105 transition"
+            className="w-full h-35 object-contain hover:scale-105 transition"
           />
 
           {/* Discount badge - top left, red circle */}
@@ -104,7 +104,7 @@ function ProductCard({ product, showAddButton = false, showSelectButton = false 
           <button
             onClick={handleAddToCart}
             disabled={!product.inStock || loading}
-            className="btn btn-outline mt-3 w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mx-auto"
+            className="btn btn-outline mt-3 w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-50 opacity-100 max-[850px]:opacity-100 min-[851px]:opacity-0 min-[851px]:group-hover:opacity-100 transition-opacity duration-200 mx-auto"
             aria-label="Add to cart"
           >
             <i className="fa-solid fa-cart-plus" />

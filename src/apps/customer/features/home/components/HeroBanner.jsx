@@ -53,6 +53,45 @@ function HeroBanner() {
 
     return (
         <>
+            <style>{`
+                .hero-banner-swiper .swiper-button-next,
+                .hero-banner-swiper .swiper-button-prev {
+                    color: #000000;
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                }
+                
+                .hero-banner-swiper .swiper-button-next:hover,
+                .hero-banner-swiper .swiper-button-prev:hover {
+                    color: #000000;
+                    transform: scale(1.1);
+                }
+                
+                .hero-banner-swiper .swiper-button-next::after,
+                .hero-banner-swiper .swiper-button-prev::after {
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+                
+                .hero-banner-swiper .swiper-button-next {
+                    right: 10px;
+                }
+                
+                .hero-banner-swiper .swiper-button-prev {
+                    left: 10px;
+                }
+                
+                /* Hide navigation buttons on mobile */
+                @media (max-width: 850px) {
+                    .hero-banner-swiper .swiper-button-next,
+                    .hero-banner-swiper .swiper-button-prev {
+                        display: none !important;
+                    }
+                }
+            `}</style>
+
             {loading ? (
                 <div className="container mx-auto h-[600px] flex items-center justify-center bg-gray-100 rounded-xl">
                     <div className="text-center">
@@ -70,7 +109,7 @@ function HeroBanner() {
                     navigation
                     autoplay={{ delay: 4000 }}
                     loop
-                    className="container mx-auto"
+                    className="container mx-auto hero-banner-swiper"
                 >
                     {slides.map((slide, i) => (
                         <SwiperSlide key={i}>

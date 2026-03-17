@@ -26,10 +26,43 @@ function ProductListingPage() {
   const [minRating, setMinRating] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortBy, setSortBy] = useState('default');
-  const itemsPerPage = 12;
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   useEffect(() => {
     loadCategories();
+  }, []);
+
+  // Calculate itemsPerPage based on screen size
+  useEffect(() => {
+    const calculateItemsPerPage = () => {
+      const width = window.innerWidth;
+      let items = 5; // default for 5 columns
+      
+      if (width <= 640) {
+        // Mobile: 2 columns, show 4 products per page (2 rows)
+        items = 4;
+      } else if (width <= 1024) {
+        // Tablet: 3 columns, show 6 products per page (2 rows)
+        items = 6;
+      } else if (width <= 1280) {
+        // Small desktop: 4 columns, show 4 products per page (1 row)
+        items = 4;
+      } else {
+        // Large desktop: 5 columns, show 5 products per page (1 row)
+        items = 5;
+      }
+      
+      setItemsPerPage(items);
+    };
+
+    calculateItemsPerPage();
+    
+    const handleResize = () => {
+      calculateItemsPerPage();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -666,7 +699,7 @@ function ProductListingPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}

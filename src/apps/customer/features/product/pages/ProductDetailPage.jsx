@@ -4,6 +4,7 @@ import productService from "@/domains/product/services/productService";
 import { useCart } from "@/domains/cart/context/CartContext";
 import { getCategoryName, getSubcategoryName } from "@/utils/categoryHelpers";
 import { formatCurrency } from "@/utils/currencyHelpers";
+import ProductCard from "@/apps/customer/features/home/components/ProductCard";
 
 function ProductDetailPage() {
   const { productId } = useParams();
@@ -100,7 +101,7 @@ function ProductDetailPage() {
   ].filter(Boolean);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-white">
       {/* Breadcrumb */}
       <nav className="mb-8 flex items-center text-sm text-gray-600">
         {breadcrumbs.map((breadcrumb, idx) => (
@@ -254,11 +255,11 @@ function ProductDetailPage() {
             </span>
           </div>
 
-          <div className="mb-6">
-            <div
-              className="text-gray-600 text-lg prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
+          {/* Price Guarantee Banner */}
+          <div className="mb-6 bg-[#E5F5E5] rounded-lg py-2 text-center">
+            <p className="text-[#447744] font-semibold text-sm">
+              Giá cam kết luôn tốt nhất!
+            </p>
           </div>
 
           {/* Price */}
@@ -396,59 +397,83 @@ function ProductDetailPage() {
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Description - 2 columns */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-4 mb-6">
-              <span className="inline-block bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-semibold">
-                MỚI TẢ
-              </span>
-            </div>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-4 mb-6">
+                <span className="inline-block bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-semibold">
+                  MỚI TẢ
+                </span>
+              </div>
 
-            {/* Short Description */}
-            <div className="mb-8 text-gray-700 leading-relaxed prose max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: product.description }} />
-            </div>
+              {/* Description Content - Collapsible */}
+              <div className={`overflow-hidden transition-all duration-300 ${descriptionExpanded ? 'max-h-none' : 'max-h-96'
+                }`}>
+                {/* Short Description */}
+                <div className="mb-8 text-gray-700 leading-relaxed prose max-w-none">
+                  <div dangerouslySetInnerHTML={{ __html: product.description }} />
+                </div>
 
-            {/* Table of Contents */}
-            {product.descriptionSections &&
-              product.descriptionSections.length > 0 && (
-                <div className="mb-8 border rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <svg
-                      className="w-5 h-5 text-gray-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" />
-                    </svg>
-                    <span className="font-semibold text-gray-800">Mục lục</span>
-                  </div>
-                  <ol className="list-decimal list-inside space-y-2">
-                    {product.descriptionSections.map((section, idx) => (
-                      <li key={idx} className="text-gray-700">
-                        <a
-                          href={`#section-${idx}`}
-                          className="text-blue-600 hover:text-blue-800"
+                {/* Table of Contents */}
+                {product.descriptionSections &&
+                  product.descriptionSections.length > 0 && (
+                    <div className="mb-8 border-t border-gray-200 pt-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <svg
+                          className="w-5 h-5 text-gray-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
                         >
-                          {section.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
+                          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" />
+                        </svg>
+                        <span className="font-semibold text-gray-800">Mục lục</span>
+                      </div>
+                      <ol className="list-decimal list-inside space-y-2">
+                        {product.descriptionSections.map((section, idx) => (
+                          <li key={idx} className="text-gray-700">
+                            <a
+                              href={`#section-${idx}`}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              {section.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
 
-            {/* Description Sections Content */}
-            {product.descriptionSections &&
-              product.descriptionSections.map((section, idx) => (
-                <div key={idx} id={`section-${idx}`} className="mb-8">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                    {section.title}
-                  </h3>
-                  <div
-                    className="text-gray-700 leading-relaxed prose max-w-none"
-                    dangerouslySetInnerHTML={{ __html: section.content }}
-                  />
-                </div>
-              ))}
+                {/* Description Sections Content */}
+                {product.descriptionSections &&
+                  product.descriptionSections.map((section, idx) => (
+                    <div key={idx} id={`section-${idx}`} className="mb-8 border-t border-gray-200 pt-6">
+                      <h3 className="text-xl font-semibold mb-4 text-gray-900">
+                        {section.title}
+                      </h3>
+                      <div
+                        className="text-gray-700 leading-relaxed prose max-w-none"
+                        dangerouslySetInnerHTML={{ __html: section.content }}
+                      />
+                    </div>
+                  ))}
+              </div>
+
+              {/* Expand/Collapse Button */}
+              <button
+                onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                className="mt-4 w-full text-center text-blue-600 hover:text-blue-800 font-semibold text-sm flex items-center justify-center gap-2 py-2 border-t border-gray-200"
+              >
+                {descriptionExpanded ? (
+                  <>
+                    <i className="fa-solid fa-chevron-up"></i>
+                    Thu gọn
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-chevron-down"></i>
+                    Xem thêm
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Sidebar - Package Contents & Related Products */}
@@ -482,31 +507,18 @@ function ProductDetailPage() {
 
             {/* Related Products Sidebar */}
             {relatedProducts.length > 0 && (
-              <div>
+              <div className="max-[850px]:hidden">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">
                   Sản phẩm liên quan
                 </h3>
                 <div className="space-y-4">
                   {relatedProducts.slice(0, 3).map((p) => (
-                    <a
+                    <ProductCard
                       key={p.id}
-                      href={`/product/${p.id}`}
-                      className="flex gap-4 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group"
-                    >
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="w-20 h-20 object-cover flex-shrink-0 group-hover:scale-110 transition"
-                      />
-                      <div className="flex-1 p-3 flex flex-col justify-between">
-                        <h4 className="text-sm font-medium text-gray-800 line-clamp-2 group-hover:text-blue-600">
-                          {p.name}
-                        </h4>
-                        <p className="text-blue-600 font-bold text-sm">
-                          {formatCurrency(p.salePrice || p.price)}
-                        </p>
-                      </div>
-                    </a>
+                      product={p}
+                      showAddButton={true}
+                      marginBottom={10}
+                    />
                   ))}
                 </div>
               </div>
@@ -515,29 +527,33 @@ function ProductDetailPage() {
         </div>
       )}
 
-      {/* Full Width Related Products */}
+      {/* Full Width Related Products - Desktop (products after first 3) */}
       {relatedProducts.length > 3 && (
-        <div className="mt-12">
+        <div className="mt-12 max-[850px]:hidden">
           <h2 className="text-2xl font-bold mb-6">Sản phẩm liên quan khác</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {relatedProducts.slice(3).map((p) => (
-              <a
+              <ProductCard
                 key={p.id}
-                href={`/product/${p.id}`}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition p-4"
-              >
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  className="w-full h-48 object-cover rounded mb-2"
-                />
-                <h3 className="font-semibold text-sm mb-2 line-clamp-2">
-                  {p.name}
-                </h3>
-                <p className="text-blue-600 font-bold">
-                  {formatCurrency(p.salePrice || p.price)}
-                </p>
-              </a>
+                product={p}
+                showAddButton={true}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Related Products - Mobile (all related products) */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-12 min-[851px]:hidden">
+          <h2 className="text-2xl font-bold mb-6">Sản phẩm liên quan</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {relatedProducts.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                showAddButton={true}
+              />
             ))}
           </div>
         </div>

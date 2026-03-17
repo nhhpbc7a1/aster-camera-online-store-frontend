@@ -245,7 +245,8 @@ function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            {/* Desktop: Table layout */}
+            <div className="hidden lg:block bg-white rounded-lg shadow overflow-hidden">
               <table className="w-full">
                 <thead className="bg-gray-100">
                   <tr>
@@ -255,14 +256,11 @@ function CartPage() {
                     <th className="text-center px-6 py-3 font-semibold">
                       Giá
                     </th>
-                    <th className="text-center px-6 py-3 font-semibold">
+                    <th className="text-center px-6 py-3 font-semibold max-[450px]:hidden">
                       Số Lượng
                     </th>
-                    <th className="text-right px-6 py-3 font-semibold">
+                    <th className="text-right px-6 py-3 font-semibold max-[1200px]:hidden">
                       Thành Tiền
-                    </th>
-                    <th className="text-center px-6 py-3 font-semibold">
-                      Thao Tác
                     </th>
                   </tr>
                 </thead>
@@ -271,6 +269,14 @@ function CartPage() {
                     <tr key={item.id} className="border-t hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
+                          {/* Remove button - Desktop */}
+                          <button
+                            onClick={() => handleRemoveItem(item.id)}
+                            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-600 transition"
+                            disabled={loading}
+                          >
+                            <i className="fa-solid fa-times text-xs"></i>
+                          </button>
                           <img
                             src={item.product.image}
                             alt={item.product.name}
@@ -287,7 +293,7 @@ function CartPage() {
                       <td className="px-6 py-4 text-center">
                         {formatCurrency(item.price)}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 max-[450px]:hidden">
                         <div className="flex items-center justify-center border rounded w-24">
                           <button
                             onClick={() =>
@@ -322,22 +328,95 @@ function CartPage() {
                           </button>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right font-semibold">
+                      <td className="px-6 py-4 text-right font-semibold max-[1200px]:hidden">
                         {formatCurrency(item.subtotal)}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => handleRemoveItem(item.id)}
-                          className="text-red-600 hover:text-red-800 font-semibold transition"
-                          disabled={loading}
-                        >
-                          Xóa
-                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile: Card layout */}
+            <div className="lg:hidden space-y-4">
+              {cart.items.map((item) => (
+                <div key={item.id} className="bg-white rounded-lg shadow p-4">
+                  <div className="flex gap-4">
+                    {/* Remove button - Mobile */}
+                    <button
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-600 transition"
+                      disabled={loading}
+                    >
+                      <i className="fa-solid fa-times text-xs"></i>
+                    </button>
+
+                    {/* Product Image */}
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-20 h-20 object-cover rounded flex-shrink-0"
+                    />
+
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm mb-1 line-clamp-2">
+                        {item.product.name}
+                      </h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        {getCategoryName(item.product.categoryId)}
+                      </p>
+
+                      {/* Quantity x Price - Mobile */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center border rounded max-[450px]:hidden">
+                          <button
+                            onClick={() =>
+                              handleUpdateQuantity(item.id, item.quantity - 1)
+                            }
+                            className="px-2 py-1 hover:bg-gray-100"
+                            disabled={loading}
+                          >
+                            −
+                          </button>
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleUpdateQuantity(
+                                item.id,
+                                parseInt(e.target.value) || 1,
+                              )
+                            }
+                            className="w-12 text-center border-0 text-sm"
+                            min="1"
+                            disabled={loading}
+                          />
+                          <button
+                            onClick={() =>
+                              handleUpdateQuantity(item.id, item.quantity + 1)
+                            }
+                            className="px-2 py-1 hover:bg-gray-100"
+                            disabled={loading}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="font-semibold text-sm">
+                          {item.quantity} x {formatCurrency(item.price)}
+                        </span>
+                      </div>
+
+                      {/* Subtotal */}
+                      <div className="text-right">
+                        <span className="font-bold text-base">
+                          {formatCurrency(item.subtotal)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-6 flex gap-4">

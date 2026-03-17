@@ -164,25 +164,26 @@ function AdminProductPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 max-[850px]:p-4">
+      <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý Sản phẩm</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Sản phẩm</h1>
+          <p className="text-gray-600 mt-1 max-[850px]:text-sm">
             Quản lý tất cả sản phẩm trong cửa hàng ({products.length})
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/products/add")}
-          className="btn btn-primary"
+          className="btn btn-primary max-[850px]:text-sm max-[850px]:px-3 max-[850px]:py-2"
         >
-          <i className="fa-solid fa-plus mr-2"></i>
-          Thêm Sản phẩm Mới
+          <i className="fa-solid fa-plus mr-2 max-[850px]:mr-1"></i>
+          <span className="max-[850px]:hidden">Thêm Sản phẩm Mới</span>
+          <span className="min-[851px]:hidden">Thêm</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="flex items-center justify-between">
             <div>
@@ -209,7 +210,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 border">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Hết hàng</p>
@@ -223,7 +224,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 border">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Nổi bật</p>
@@ -237,7 +238,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 border">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Flash Sale</p>
@@ -251,7 +252,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 border">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tổng GT</p>
@@ -267,8 +268,8 @@ function AdminProductPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-[850px]:gap-3">
           <div>
             <label className="block text-sm font-semibold mb-2">
               <i className="fa-solid fa-search mr-2"></i>
@@ -303,7 +304,7 @@ function AdminProductPage() {
             </select>
           </div>
 
-          <div>
+          <div className="max-[850px]:hidden">
             <label className="block text-sm font-semibold mb-2">
               <i className="fa-solid fa-list mr-2"></i>
               Hiển thị mỗi trang
@@ -329,8 +330,8 @@ function AdminProductPage() {
       {/* Products Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden border">
         {/* Results Info */}
-        <div className="px-6 py-3 bg-gray-50 border-b">
-          <p className="text-sm text-gray-600">
+        <div className="px-6 max-[850px]:px-4 py-3 bg-gray-50 border-b">
+          <p className="text-sm max-[850px]:text-xs text-gray-600">
             Hiển thị <span className="font-semibold">{startIndex + 1}</span> -{" "}
             <span className="font-semibold">
               {Math.min(endIndex, filteredProducts.length)}
@@ -341,7 +342,8 @@ function AdminProductPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="overflow-x-auto hidden lg:block">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -514,6 +516,112 @@ function AdminProductPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card Layout */}
+        <div className="lg:hidden p-4 space-y-3">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <i className="fa-solid fa-box-open text-4xl mb-2 block text-gray-300"></i>
+              {searchTerm || filterCategory !== "all"
+                ? "Không tìm thấy sản phẩm"
+                : "Chưa có sản phẩm nào"}
+            </div>
+          ) : (
+            currentProducts.map((product) => (
+              <div
+                key={product.id}
+                className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+              >
+                <div className="flex gap-3 mb-3">
+                  <div className="w-20 h-20 rounded-md overflow-hidden border flex-shrink-0">
+                    <img
+                      src={product.image || "https://via.placeholder.com/100"}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm line-clamp-2 mb-1">
+                      {product.name}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-1">ID: {product.id}</p>
+                    <div className="flex gap-1 flex-wrap">
+                      {product.isFeatured && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                          <i className="fa-solid fa-star mr-1"></i>
+                          Nổi bật
+                        </span>
+                      )}
+                      {product.isFlashSale && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                          <i className="fa-solid fa-bolt mr-1"></i>
+                          Flash
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                  <div>
+                    <p className="text-xs text-gray-600">Danh mục</p>
+                    <p className="font-medium text-xs">
+                      {getCategoryName(product.categoryId) || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Giá</p>
+                    <p className="font-semibold text-sm">
+                      {formatCurrency(product.salePrice || product.price)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Tồn kho</p>
+                    <p className="font-medium text-sm">{product.quantity} units</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Trạng thái</p>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        product.inStock
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {product.inStock ? "Còn hàng" : "Hết hàng"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t">
+                  <button
+                    onClick={() => navigate(`/admin/products/edit/${product.id}`)}
+                    className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded transition flex items-center gap-1"
+                  >
+                    <i className="fa-solid fa-pen-to-square"></i>
+                    <span>Sửa</span>
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleDuplicateProduct(product)}
+                      className="px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-50 rounded transition"
+                      title="Sao chép"
+                    >
+                      <i className="fa-solid fa-copy"></i>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(product.id)}
+                      className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition"
+                      title="Xóa"
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Pagination */}

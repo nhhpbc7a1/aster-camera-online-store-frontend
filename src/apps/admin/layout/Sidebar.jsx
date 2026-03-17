@@ -40,16 +40,16 @@ const getBadgeColor = (color) => {
   }
 };
 
-const Sidebar = ({ isCollapsed, onToggle }) => {
+const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) => {
   const location = useLocation();
 
   return (
     <>
       {/* Mobile Overlay */}
-      {!isCollapsed && (
+      {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
-          onClick={onToggle}
+          className="fixed inset-0 z-10 bg-gray-800/60 max-[850px]:block min-[851px]:hidden"
+          onClick={onToggleMobile}
         />
       )}
 
@@ -59,7 +59,8 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         transition-all duration-300 ease-in-out
         ${isCollapsed ? 'w-20' : 'w-64'}
         lg:translate-x-0
-        ${isCollapsed ? 'translate-x-0' : 'translate-x-0'}
+        ${isMobileMenuOpen ? 'max-[850px]:translate-x-0' : 'max-[850px]:-translate-x-full'}
+        min-[851px]:translate-x-0
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -76,8 +77,14 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
           </div>
 
           <button
+            onClick={onToggleMobile}
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors max-[850px]:block min-[851px]:hidden"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors max-[850px]:hidden min-[851px]:block"
           >
             {isCollapsed ? (
               <Menu className="w-5 h-5" />
