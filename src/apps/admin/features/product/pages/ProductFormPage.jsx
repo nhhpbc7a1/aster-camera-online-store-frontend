@@ -109,7 +109,7 @@ function ProductFormPage() {
       setFormData({
         name: product.name || "",
         categoryId: product.categoryId || 1,
-        subcategoryId: product.subcategoryId || null,
+        subcategoryId: product.subcategoryId ? Number(product.subcategoryId) : null,
         price: product.price || 0,
         salePrice: product.salePrice || product.price || 0,
         discount: product.discount || 0,
@@ -144,17 +144,38 @@ function ProductFormPage() {
       setImagePreview(value);
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : type === "number"
-            ? parseFloat(value) || 0
-            : name === "categoryId" || name === "subcategoryId"
-              ? parseInt(value) || null
-              : value,
-    }));
+    setFormData((prev) => {
+      let newValue;
+      if (type === "checkbox") {
+        newValue = checked;
+      } else if (type === "number") {
+        newValue = parseFloat(value) || 0;
+      } else if (name === "categoryId") {
+        // Parse categoryId and reset subcategoryId when category changes
+        const categoryIdValue = value === "" ? null : parseInt(value);
+        return {
+          ...prev,
+          categoryId: categoryIdValue || null,
+          subcategoryId: null, // Reset subcategory when category changes
+        };
+      } else if (name === "subcategoryId") {
+        // Parse subcategoryId, handle empty string as null
+        if (value === "" || value === null || value === undefined) {
+          newValue = null;
+        } else {
+          // Ensure we parse the actual ID value, not index
+          const parsedValue = typeof value === 'number' ? value : parseInt(value, 10);
+          newValue = isNaN(parsedValue) ? null : parsedValue;
+        }
+      } else {
+        newValue = value;
+      }
+
+      return {
+        ...prev,
+        [name]: newValue,
+      };
+    });
   };
 
   const calculateDiscount = (price, salePrice) => {
@@ -261,11 +282,44 @@ function ProductFormPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validate subcategoryId belongs to selected category
+      let validSubcategoryId = null;
+      if (formData.subcategoryId !== null && formData.subcategoryId !== undefined && formData.subcategoryId !== "") {
+        // Parse subcategoryId - ensure we get the actual ID, not index
+        const subcategoryIdValue = typeof formData.subcategoryId === 'number' 
+          ? formData.subcategoryId 
+          : parseInt(String(formData.subcategoryId), 10);
+        
+        // Check if subcategoryId is valid number and belongs to current category
+        if (!isNaN(subcategoryIdValue) && subcategoryIdValue > 0) {
+          const categoryIdValue = typeof formData.categoryId === 'number' 
+            ? formData.categoryId 
+            : parseInt(String(formData.categoryId), 10);
+          
+          const selectedCategory = categories.find(
+            (cat) => cat.id === categoryIdValue
+          );
+          
+          // Verify subcategory belongs to selected category by checking actual ID
+          const isValidSubcategory = selectedCategory?.subcategories?.some(
+            (sub) => sub.id === subcategoryIdValue
+          );
+          
+          if (isValidSubcategory) {
+            validSubcategoryId = subcategoryIdValue;
+          } else {
+            console.warn('Subcategory ID', subcategoryIdValue, 'does not belong to category', categoryIdValue);
+          }
+        } else {
+          console.warn('Invalid subcategoryId value:', formData.subcategoryId);
+        }
+      }
+
       // Only send fields that backend accepts
       const productData = {
         name: formData.name,
         categoryId: typeof formData.categoryId === 'number' ? formData.categoryId : parseInt(formData.categoryId),
-        subcategoryId: formData.subcategoryId ? (typeof formData.subcategoryId === 'number' ? formData.subcategoryId : parseInt(formData.subcategoryId)) : null,
+        subcategoryId: validSubcategoryId,
         price: parseFloat(formData.price),
         salePrice: parseFloat(formData.salePrice) || parseFloat(formData.price),
         discount: calculateDiscount(formData.price, formData.salePrice),
@@ -421,14 +475,14 @@ function ProductFormPage() {
                     </label>
                     <select
                       name="subcategoryId"
-                      value={formData.subcategoryId || ""}
+                      value={formData.subcategoryId ? String(formData.subcategoryId) : ""}
                       onChange={handleFormChange}
                       className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-black"
                       disabled={subcategories.length === 0}
                     >
                       <option value="">-- Chọn danh mục con --</option>
                       {subcategories.map((sub) => (
-                        <option key={sub.id} value={sub.id}>
+                        <option key={sub.id} value={String(sub.id)}>
                           {sub.name}
                         </option>
                       ))}
