@@ -788,14 +788,37 @@ Trân trọng,
                   Sản phẩm ({selectedOrder.items.length})
                 </h3>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedOrder.items.map((item, idx) => (
-                    <div key={idx} className="text-sm bg-gray-50 p-2 rounded">
-                      <p className="font-semibold">{item.productName}</p>
-                      <p className="text-gray-600">
-                        SL: {item.quantity} × {formatCurrency(item.price)} = {formatCurrency(item.quantity * item.price)}
-                      </p>
-                    </div>
-                  ))}
+                  {(() => {
+                    // Remove duplicates by productId or productName, combine quantities
+                    const uniqueItems = selectedOrder.items.reduce((acc, item) => {
+                      const identifier = item.productId || item.productName;
+                      const existing = acc.find(i => (i.productId || i.productName) === identifier);
+                      
+                      if (existing) {
+                        // If duplicate found, combine quantities
+                        existing.quantity += item.quantity || 1;
+                        existing.subtotal = (existing.subtotal || 0) + (item.subtotal || item.price * item.quantity || 0);
+                      } else {
+                        // Add new item
+                        acc.push({ ...item });
+                      }
+                      return acc;
+                    }, []);
+                    
+                    return uniqueItems.map((item, idx) => {
+                      const uniqueKey = item.id || item.productId || `${item.productName}-${idx}`;
+                      const subtotal = item.subtotal || (item.price * item.quantity);
+                      
+                      return (
+                        <div key={uniqueKey} className="text-sm bg-gray-50 p-2 rounded">
+                          <p className="font-semibold">{item.productName}</p>
+                          <p className="text-gray-600">
+                            SL: {item.quantity} × {formatCurrency(item.price)} = {formatCurrency(subtotal)}
+                          </p>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </div>
 
