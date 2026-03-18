@@ -98,7 +98,7 @@ const Header = ({
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]">
               <div className="px-4 py-2 border-b border-gray-100">
                 <p className="text-sm font-medium text-gray-900">Admin User</p>
-                <p className="text-xs text-gray-500">admin@hakora.com</p>
+                <p className="text-xs text-gray-500">asterproduction333@gmail.com</p>
               </div>
               <div className="py-1">
                 <LogoutButton className="w-full justify-start" />
