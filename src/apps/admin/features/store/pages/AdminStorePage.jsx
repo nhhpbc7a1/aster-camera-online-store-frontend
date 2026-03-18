@@ -55,26 +55,27 @@ function AdminStorePage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-[850px]:p-4 w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý Cửa hàng</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Cửa hàng</h1>
+          <p className="text-gray-600 mt-1 max-[850px]:text-sm">
             Quản lý hệ thống cửa hàng ({stores.length})
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/stores/add")}
-          className="btn btn-primary"
+          className="btn btn-primary max-[850px]:text-sm max-[850px]:px-3 max-[850px]:py-1"
         >
-          <i className="fa-solid fa-plus mr-2"></i>
-          Thêm Cửa hàng Mới
+          <i className="fa-solid fa-plus mr-2 max-[850px]:mr-1"></i>
+          <span className="max-[850px]:hidden">Thêm Cửa hàng Mới</span>
+          <span className="min-[851px]:hidden">Thêm</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 max-[850px]:grid-cols-1 max-[850px]:gap-2 max-[850px]:mb-4 w-full">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="flex items-center justify-between">
             <div>
@@ -117,7 +118,7 @@ function AdminStorePage() {
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6 border">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border w-full overflow-x-hidden">
         <label className="block text-sm font-semibold mb-2">
           <i className="fa-solid fa-search mr-2"></i>
           Tìm kiếm cửa hàng
@@ -132,7 +133,7 @@ function AdminStorePage() {
       </div>
 
       {/* Stores Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-[850px]:gap-4 w-full">
         {filteredStores.length === 0 ? (
           <div className="col-span-full bg-white rounded-lg shadow p-12 text-center border">
             <i className="fa-solid fa-store-slash text-6xl text-gray-300 mb-4"></i>

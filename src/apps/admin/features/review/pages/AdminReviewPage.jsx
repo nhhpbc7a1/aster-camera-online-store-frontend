@@ -142,22 +142,22 @@ function AdminReviewPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 max-[850px]:p-4 w-full overflow-x-hidden">
+      <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý Đánh giá</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Đánh giá</h1>
+          <p className="text-gray-600 mt-1 max-[850px]:text-sm">
             Quản lý tất cả đánh giá từ khách hàng ({reviews.length})
           </p>
         </div>
-        <button onClick={loadReviews} className="btn btn-outline">
-          <i className="fa-solid fa-rotate mr-2"></i>
-          Làm mới
+        <button onClick={loadReviews} className="btn btn-outline max-[850px]:text-sm max-[850px]:px-3 max-[850px]:py-1">
+          <i className="fa-solid fa-rotate mr-2 max-[850px]:mr-1"></i>
+          <span className="max-[850px]:hidden">Làm mới</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4 w-full">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="text-center">
             <p className="text-sm text-gray-600">Tổng đánh giá</p>
@@ -183,7 +183,7 @@ function AdminReviewPage() {
           </div>
         </div>
 
-        <div className="bg-red-50 rounded-lg shadow p-4 border border-red-200">
+        <div className="bg-red-50 rounded-lg shadow p-4 border border-red-200 hidden lg:block">
           <div className="text-center">
             <p className="text-sm text-red-700">Đã từ chối</p>
             <p className="text-2xl font-bold mt-1 text-red-800">
@@ -192,7 +192,7 @@ function AdminReviewPage() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow p-4 text-white">
+        <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow p-4 text-white hidden lg:block">
           <div className="text-center">
             <p className="text-sm opacity-90">Điểm TB</p>
             <p className="text-2xl font-bold mt-1">
@@ -203,8 +203,8 @@ function AdminReviewPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-[850px]:gap-3 w-full">
           <div>
             <label className="block text-sm font-semibold mb-2">
               <i className="fa-solid fa-search mr-2"></i>
@@ -240,7 +240,7 @@ function AdminReviewPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[850px]:gap-4">
         {/* Reviews List */}
         <div className="lg:col-span-2">
           <div className="space-y-4">

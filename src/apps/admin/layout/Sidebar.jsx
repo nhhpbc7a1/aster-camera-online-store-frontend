@@ -32,16 +32,20 @@ const navItems = [
 const getBadgeColor = (color) => {
   switch (color) {
     case 'danger':
-      return 'bg-red-500 hover:bg-red-600'; // Chỉ cho complaints/urgent
+      return 'bg-red-500'; // Cho complaints/urgent
     case 'primary':
-      return 'bg-primary-500 hover:bg-primary-600'; // Cho tất cả info badges
+      return 'bg-red-500'; // Cho notification badges - màu đỏ nổi bật
     default:
-      return 'bg-gray-500 hover:bg-gray-600'; // Fallback
+      return 'bg-gray-500'; // Fallback
   }
 };
 
 const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) => {
   const location = useLocation();
+  
+  // On mobile, always show full sidebar when open (ignore isCollapsed)
+  // On desktop, respect isCollapsed state
+  const shouldShowFull = isMobileMenuOpen || !isCollapsed;
 
   return (
     <>
@@ -56,19 +60,19 @@ const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) =>
       {/* Sidebar */}
       <aside className={`
         fixed top-0 left-0 z-50 h-full bg-white shadow-sidebar border-r border-gray-200
-        transition-all duration-300 ease-in-out
+        transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-auto
         ${isCollapsed ? 'w-20' : 'w-64'}
-        lg:translate-x-0
+        max-[850px]:w-64 max-[850px]:max-w-[85vw]
         ${isMobileMenuOpen ? 'max-[850px]:translate-x-0' : 'max-[850px]:-translate-x-full'}
         min-[851px]:translate-x-0
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+          <div className={`flex items-center gap-3 ${!shouldShowFull ? 'justify-center' : ''}`}>
             <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">Ast</span>
             </div>
-            {!isCollapsed && (
+            {shouldShowFull && (
               <div>
                 <h1 className="font-bold text-gray-900">Aster</h1>
                 <p className="text-xs text-gray-500">Admin Panel</p>
@@ -95,7 +99,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) =>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
           {navItems.map((item) => {
             // Check if current path matches or starts with item path (for nested routes)
             const isActive = location.pathname === item.path ||
@@ -109,30 +113,39 @@ const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) =>
                 className={`
                   nav-link group relative
                   ${isActive ? 'nav-link-active bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100'}
-                  ${isCollapsed ? 'justify-center px-2' : 'px-3'}
+                  ${!shouldShowFull ? 'sidebar-collapsed' : ''}
                 `}
-                title={isCollapsed ? item.label : ''}
+                title={!shouldShowFull ? item.label : ''}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <IconComponent size={20} />
-                  {!isCollapsed && (
-                    <span className="font-medium truncate">{item.label}</span>
-                  )}
-                </div>
-
-                {/* Badge */}
-                {item.badge && (
-                  <span className={`
-                    inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white rounded-full ml-auto
-                    ${isCollapsed ? 'absolute -top-1 -right-1 w-5 h-5 text-xs flex items-center justify-center' : ''}
-                    ${getBadgeColor(item.badgeColor)}
-                  `}>
-                    {item.badge > 999 ? '999+' : item.badge}
-                  </span>
+                {!shouldShowFull ? (
+                  <div className="sidebar-icon-wrapper">
+                    <IconComponent size={20} />
+                    {item.badge && (
+                      <span className={`sidebar-badge ${getBadgeColor(item.badgeColor)}`}>
+                        {item.badge > 999 ? '999+' : item.badge}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <IconComponent size={20} className="flex-shrink-0" />
+                      <span className="font-medium truncate">{item.label}</span>
+                    </div>
+                    {/* Badge - show when sidebar is expanded */}
+                    {item.badge && (
+                      <span className={`
+                        inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white rounded-full ml-auto flex-shrink-0
+                        ${getBadgeColor(item.badgeColor)}
+                      `}>
+                        {item.badge > 999 ? '999+' : item.badge}
+                      </span>
+                    )}
+                  </>
                 )}
 
-                {/* Tooltip for collapsed state */}
-                {isCollapsed && (
+                {/* Tooltip for collapsed state - only on desktop */}
+                {!shouldShowFull && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
                     {item.label}
                     {item.badge && (
@@ -148,7 +161,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobileMenuOpen, onToggleMobile }) =>
         </nav>
 
         {/* Footer */}
-        {!isCollapsed && (
+        {shouldShowFull && (
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center gap-3 text-sm text-gray-500">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">

@@ -16,7 +16,7 @@ import '@/apps/admin/layout/AdminComponent.css';
 
 const AdminRoutes = () => {
   return (
-    <div className="AdminComponent">
+    <div className="AdminComponent overflow-x-hidden w-full">
       <ProtectedRoute requiredRoles={["ADMIN", "admin"]}>
         <Routes>
           <Route path="" element={<Layout />}>

@@ -96,3 +96,52 @@ export const calculateDiscountPrice = (price, discount) => {
 export const formatPriceRange = (minPrice, maxPrice) => {
     return `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
 };
+
+/**
+ * Format large currency to compact format (e.g., 34.277.500.000₫ -> 34,3 tỷ ₫)
+ * @param {number|string} amount - The amount to format
+ * @param {boolean} showCurrency - Whether to show currency symbol (₫)
+ * @returns {string} Compact formatted currency string
+ */
+export const formatCurrencyCompact = (amount, showCurrency = true) => {
+    // Convert to number if string
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+
+    // Handle invalid numbers
+    if (isNaN(numAmount) || numAmount === 0) {
+        return showCurrency ? '0₫' : '0';
+    }
+
+    const absAmount = Math.abs(numAmount);
+    const sign = numAmount < 0 ? '-' : '';
+
+    // Format based on size
+    if (absAmount >= 1000000000) {
+        // Tỷ (Billions)
+        const billions = absAmount / 1000000000;
+        const formatted = billions.toLocaleString('vi-VN', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        });
+        return `${sign}${formatted} tỷ${showCurrency ? ' ₫' : ''}`;
+    } else if (absAmount >= 1000000) {
+        // Triệu (Millions)
+        const millions = absAmount / 1000000;
+        const formatted = millions.toLocaleString('vi-VN', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        });
+        return `${sign}${formatted} triệu${showCurrency ? ' ₫' : ''}`;
+    } else if (absAmount >= 1000) {
+        // Nghìn (Thousands)
+        const thousands = absAmount / 1000;
+        const formatted = thousands.toLocaleString('vi-VN', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        });
+        return `${sign}${formatted} nghìn${showCurrency ? ' ₫' : ''}`;
+    } else {
+        // Less than 1000, use normal format
+        return formatCurrency(amount, showCurrency);
+    }
+};

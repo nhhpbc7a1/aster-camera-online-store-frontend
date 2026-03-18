@@ -764,7 +764,8 @@ function ProductFormPage() {
 
                 {Object.keys(formData.specifications).length > 0 && (
                   <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[600px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="text-left px-4 py-2 text-sm font-semibold">
@@ -796,6 +797,7 @@ function ProductFormPage() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 )}
               </div>

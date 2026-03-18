@@ -100,7 +100,7 @@ function AdminProductPage() {
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
@@ -128,7 +128,7 @@ function AdminProductPage() {
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
@@ -162,7 +162,7 @@ function AdminProductPage() {
   }
 
   return (
-    <div className="p-6 max-[850px]:p-4">
+    <div className="p-6 max-[850px]:p-4 w-full overflow-x-hidden">
       <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
           <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Sản phẩm</h1>
@@ -181,7 +181,7 @@ function AdminProductPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4 w-full">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="flex items-center justify-between">
             <div>
@@ -208,7 +208,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border hidden lg:block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Hết hàng</p>
@@ -222,7 +222,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border hidden lg:block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Nổi bật</p>
@@ -236,7 +236,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border hidden lg:block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Flash Sale</p>
@@ -250,7 +250,7 @@ function AdminProductPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border max-[850px]:hidden">
+        <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-2 border hidden lg:block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tổng GT</p>
@@ -266,8 +266,8 @@ function AdminProductPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-[850px]:gap-3">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-[850px]:gap-3 w-full">
           <div>
             <label className="block text-sm font-semibold mb-2">
               <i className="fa-solid fa-search mr-2"></i>
@@ -326,7 +326,7 @@ function AdminProductPage() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden border">
+      <div className="bg-white rounded-lg shadow overflow-hidden border w-full">
         {/* Results Info */}
         <div className="px-6 max-[850px]:px-4 py-3 bg-gray-50 border-b">
           <p className="text-sm max-[850px]:text-xs text-gray-600">
@@ -340,9 +340,9 @@ function AdminProductPage() {
           </p>
         </div>
 
-        {/* Desktop Table */}
-        <div className="overflow-x-auto hidden lg:block">
-          <table className="w-full">
+        {/* Desktop Table - Full (XL screens) */}
+        <div className="overflow-x-auto hidden xl:block w-full">
+          <table className="w-full min-w-[1000px]">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-6 py-3 font-semibold text-sm">
@@ -452,24 +452,193 @@ function AdminProductPage() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          product.quantity > 10
-                            ? "bg-green-100 text-green-800"
-                            : product.quantity > 0
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                        }`}
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${product.quantity > 10
+                          ? "bg-green-100 text-green-800"
+                          : product.quantity > 0
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {product.quantity} units
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          product.inStock
-                            ? "bg-green-100 text-green-800"
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${product.inStock
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {product.inStock ? (
+                          <>
+                            <i className="fa-solid fa-check mr-1"></i>
+                            Còn hàng
+                          </>
+                        ) : (
+                          <>
+                            <i className="fa-solid fa-times mr-1"></i>
+                            Hết hàng
+                          </>
+                        )}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => navigate(`/admin/products/edit/${product.id}`)}
+                          className="px-2 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded transition"
+                          title="Chỉnh sửa"
+                        >
+                          <i className="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          onClick={() => handleDuplicateProduct(product)}
+                          className="px-2 py-1 text-sm font-medium text-green-600 hover:bg-green-50 rounded transition"
+                          title="Sao chép"
+                        >
+                          <i className="fa-solid fa-copy"></i>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="px-2 py-1 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition"
+                          title="Xóa"
+                        >
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Medium Table - Compact (MD to XL screens) */}
+        <div className="overflow-x-auto hidden md:block xl:hidden w-full">
+          <table className="w-full min-w-[700px]">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-sm">
+                  Sản phẩm
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-sm">
+                  Danh mục
+                </th>
+                <th className="text-center px-4 py-3 font-semibold text-sm">
+                  Giá
+                </th>
+                <th className="text-center px-4 py-3 font-semibold text-sm">
+                  Tồn kho
+                </th>
+                <th className="text-center px-4 py-3 font-semibold text-sm">
+                  Thao tác
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {filteredProducts.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
+                    <i className="fa-solid fa-box-open text-4xl mb-2 block text-gray-300"></i>
+                    {searchTerm || filterCategory !== "all"
+                      ? "Không tìm thấy sản phẩm"
+                      : "Chưa có sản phẩm nào"}
+                  </td>
+                </tr>
+              ) : (
+                currentProducts.map((product) => (
+                  <tr key={product.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-16 h-16 rounded-md overflow-hidden border flex-shrink-0">
+                          <img
+                            src={
+                              product.image ||
+                              "https://via.placeholder.com/100"
+                            }
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm line-clamp-1">
+                            {product.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            ID: {product.id}
+                          </p>
+                          <div className="flex gap-1 mt-1">
+                            {product.isFeatured && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i className="fa-solid fa-star mr-1"></i>
+                                Nổi bật
+                              </span>
+                            )}
+                            {product.isFlashSale && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                                <i className="fa-solid fa-bolt mr-1"></i>
+                                Flash
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div>
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {getCategoryName(product.categoryId) || "N/A"}
+                        </span>
+                        {product.subcategoryId && getSubcategoryName(product.categoryId, product.subcategoryId) && (
+                          <div className="mt-1">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                              <i className="fa-solid fa-arrow-right mr-1"></i>
+                              {getSubcategoryName(product.categoryId, product.subcategoryId)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div>
+                        <p className="font-semibold text-sm">
+                          {formatCurrency(product.salePrice || product.price)}
+                        </p>
+                        {product.salePrice &&
+                          product.salePrice < product.price && (
+                            <>
+                              <p className="text-xs text-gray-400 line-through">
+                                {formatCurrency(product.price)}
+                              </p>
+                              <span className="inline-block mt-1 px-1.5 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded">
+                                -{product.discount}%
+                              </span>
+                            </>
+                          )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${product.quantity > 10
+                          ? "bg-green-100 text-green-800"
+                          : product.quantity > 0
+                            ? "bg-yellow-100 text-yellow-800"
                             : "bg-red-100 text-red-800"
-                        }`}
+                          }`}
+                      >
+                        {product.quantity} units
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${product.inStock
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {product.inStock ? (
                           <>
@@ -517,7 +686,7 @@ function AdminProductPage() {
         </div>
 
         {/* Mobile Card Layout */}
-        <div className="lg:hidden p-4 space-y-3">
+        <div className="md:hidden p-4 space-y-3">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <i className="fa-solid fa-box-open text-4xl mb-2 block text-gray-300"></i>
@@ -581,11 +750,10 @@ function AdminProductPage() {
                   <div>
                     <p className="text-xs text-gray-600">Trạng thái</p>
                     <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        product.inStock
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${product.inStock
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {product.inStock ? "Còn hàng" : "Hết hàng"}
                     </span>
@@ -663,11 +831,10 @@ function AdminProductPage() {
                       ) : (
                         <button
                           onClick={() => goToPage(page)}
-                          className={`px-3 py-2 text-sm font-medium border rounded-md transition ${
-                            currentPage === page
-                              ? "bg-black text-white border-black"
-                              : "hover:bg-gray-100"
-                          }`}
+                          className={`px-3 py-2 text-sm font-medium border rounded-md transition ${currentPage === page
+                            ? "bg-black text-white border-black"
+                            : "hover:bg-gray-100"
+                            }`}
                         >
                           {page}
                         </button>

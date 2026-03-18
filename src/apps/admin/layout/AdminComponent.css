@@ -3,6 +3,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* AdminComponent wrapper styles */
+.AdminComponent {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* Scoped styles for admin area only - only used by Sidebar component */
 .AdminComponent .nav-link {
   display: flex;
@@ -18,6 +26,55 @@
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Override for collapsed state - ensure perfect centering */
+.AdminComponent .nav-link.sidebar-collapsed {
+  gap: 0 !important;
+  padding: 0.625rem 0.5rem !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+}
+
+/* Icon wrapper when collapsed */
+.AdminComponent .sidebar-icon-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  position: relative !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.AdminComponent .sidebar-icon-wrapper > svg,
+.AdminComponent .sidebar-icon-wrapper > *:first-child {
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Badge when collapsed */
+.AdminComponent .sidebar-badge {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 4px !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  color: white !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: translate(50%, -50%) !important;
 }
 
 .AdminComponent .nav-link:hover {

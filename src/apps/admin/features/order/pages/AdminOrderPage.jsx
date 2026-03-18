@@ -358,7 +358,7 @@ Trân trọng,
   }
 
   return (
-    <div className="p-6 max-[850px]:p-4">
+    <div className="p-6 max-[850px]:p-4 w-full overflow-x-hidden">
       <div className="flex justify-between items-center mb-6 max-[850px]:mb-4">
         <div>
           <h1 className="text-3xl max-[850px]:text-xl font-bold">Quản lý Đơn hàng</h1>
@@ -376,7 +376,7 @@ Trân trọng,
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-6 max-[850px]:grid-cols-2 max-[850px]:gap-2 max-[850px]:mb-4 w-full">
         <div className="bg-white rounded-lg shadow p-4 border">
           <div className="text-center">
             <p className="text-sm text-gray-600">Tổng đơn</p>
@@ -398,28 +398,28 @@ Trân trọng,
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-purple-200 max-[850px]:hidden">
+        <div className="bg-purple-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-purple-200 hidden lg:block">
           <div className="text-center">
             <p className="text-sm text-purple-700 max-[850px]:text-xs">Đã gửi</p>
             <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-purple-800">{stats.shipped}</p>
           </div>
         </div>
 
-        <div className="bg-green-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-green-200 max-[850px]:hidden">
+        <div className="bg-green-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-green-200 hidden lg:block">
           <div className="text-center">
             <p className="text-sm text-green-700 max-[850px]:text-xs">Đã giao</p>
             <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-green-800">{stats.delivered}</p>
           </div>
         </div>
 
-        <div className="bg-red-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-red-200 max-[850px]:hidden">
+        <div className="bg-red-50 rounded-lg shadow p-4 max-[850px]:p-2 border border-red-200 hidden lg:block">
           <div className="text-center">
             <p className="text-sm text-red-700 max-[850px]:text-xs">Đã hủy</p>
             <p className="text-2xl max-[850px]:text-lg font-bold mt-1 text-red-800">{stats.cancelled}</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow p-4 max-[850px]:p-2 text-white max-[850px]:hidden">
+        <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow p-4 max-[850px]:p-2 text-white hidden lg:block">
           <div className="text-center">
             <p className="text-sm max-[850px]:text-xs opacity-90">Doanh thu</p>
             <p className="text-xl max-[850px]:text-lg font-bold mt-1">
@@ -430,7 +430,7 @@ Trân trọng,
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border">
+      <div className="bg-white rounded-lg shadow p-4 max-[850px]:p-3 mb-6 max-[850px]:mb-4 border w-full overflow-x-hidden">
         <label className="block text-sm max-[850px]:text-xs font-semibold mb-2">
           <i className="fa-solid fa-search mr-2"></i>
           Tìm kiếm đơn hàng
@@ -474,10 +474,10 @@ Trân trọng,
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[850px]:gap-4">
         {/* Orders List */}
         <div className="lg:col-span-2">
-          {/* Desktop Table */}
-          <div className="bg-white rounded-lg shadow overflow-hidden border hidden lg:block">
+          {/* Desktop Table - Full (XL screens) */}
+          <div className="bg-white rounded-lg shadow overflow-hidden border hidden xl:block w-full">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[1200px]">
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="text-left px-6 py-3 font-semibold text-sm">
@@ -563,8 +563,97 @@ Trân trọng,
             </div>
           </div>
 
+          {/* Medium Table - Compact (MD to XL screens) */}
+          <div className="bg-white rounded-lg shadow overflow-hidden border hidden md:block xl:hidden w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px]">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-semibold text-sm">
+                      Đơn hàng
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold text-sm">
+                      Khách hàng
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold text-sm">
+                      Tổng tiền
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold text-sm">
+                      Trạng thái
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold text-sm">
+                      Ngày
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredOrders.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="px-4 py-12 text-center text-gray-500"
+                      >
+                        <i className="fa-solid fa-receipt text-4xl mb-2 block text-gray-300"></i>
+                        {searchTerm || filter !== "all"
+                          ? "Không tìm thấy đơn hàng"
+                          : "Chưa có đơn hàng nào"}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredOrders.map((order) => (
+                      <tr
+                        key={order.id}
+                        className={`hover:bg-gray-50 cursor-pointer transition ${
+                          selectedOrder?.id === order.id ? "bg-blue-50" : ""
+                        }`}
+                        onClick={() => setSelectedOrder(order)}
+                      >
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="font-semibold text-sm text-blue-600">
+                              {order.orderNumber}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {order.items.length} SP
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="font-semibold text-sm line-clamp-1">
+                            {order.shippingAddress.fullName}
+                          </p>
+                          <p className="text-xs text-gray-600 line-clamp-1">
+                            {order.email || order.shippingAddress?.email || "N/A"}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <p className="font-bold text-sm text-blue-600">
+                            {formatCurrency(order.total)}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                              order.status
+                            )}`}
+                          >
+                            <i className={`fa-solid ${getStatusIcon(order.status)} text-xs`}></i>
+                            <span className="hidden lg:inline">{getStatusLabel(order.status)}</span>
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center text-xs text-gray-600">
+                          {new Date(order.createdAt).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' })}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Mobile Card Layout */}
-          <div className="lg:hidden space-y-3">
+          <div className="md:hidden space-y-3">
             {filteredOrders.length === 0 ? (
               <div className="bg-white rounded-lg shadow p-6 border text-center text-gray-500">
                 <i className="fa-solid fa-receipt text-4xl mb-2 block text-gray-300"></i>

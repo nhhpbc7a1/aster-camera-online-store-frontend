@@ -56,6 +56,11 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 #root {

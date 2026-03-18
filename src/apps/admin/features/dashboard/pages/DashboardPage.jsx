@@ -13,36 +13,35 @@ import {
 } from 'lucide-react';
 import productService from '@/domains/product/services/productService';
 import categoryService from '@/domains/category/services/categoryService';
-import { formatCurrency } from '@/utils/currencyHelpers';
+import { formatCurrency, formatCurrencyCompact } from '@/utils/currencyHelpers';
 
 // Stat Card Component
 const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
   const isPositive = changeType === 'positive';
-  const bgColorClass = `bg-${color}-50`;
-  const textColorClass = `text-${color}-600`;
-  const iconBgClass = `bg-${color}-100`;
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">{value}</h3>
-          <div className="flex items-center gap-1">
-            {isPositive ? (
-              <ArrowUpRight className="w-4 h-4 text-green-600" />
-            ) : (
-              <ArrowDownRight className="w-4 h-4 text-red-600" />
-            )}
-            <span className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              {change}
-            </span>
-            <span className="text-sm text-gray-500">vs tháng trước</span>
-          </div>
+    <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 h-full flex flex-col">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0 pr-3">
+          <p className="text-xs font-medium text-gray-600 mb-2 truncate">{title}</p>
+          <h3 className="text-2xl font-bold text-gray-900 mb-3 whitespace-nowrap">
+            {value}
+          </h3>
         </div>
-        <div className={`p-3 rounded-lg ${color === 'blue' ? 'bg-blue-100' : color === 'green' ? 'bg-green-100' : color === 'purple' ? 'bg-purple-100' : 'bg-orange-100'}`}>
-          <Icon className={`w-6 h-6 ${color === 'blue' ? 'text-blue-600' : color === 'green' ? 'text-green-600' : color === 'purple' ? 'text-purple-600' : 'text-orange-600'}`} />
+        <div className={`p-2.5 rounded-lg flex-shrink-0 ${color === 'blue' ? 'bg-blue-100' : color === 'green' ? 'bg-green-100' : color === 'purple' ? 'bg-purple-100' : 'bg-orange-100'}`}>
+          <Icon className={`w-5 h-5 ${color === 'blue' ? 'text-blue-600' : color === 'green' ? 'text-green-600' : color === 'purple' ? 'text-purple-600' : 'text-orange-600'}`} />
         </div>
+      </div>
+      <div className="flex items-center gap-1.5 flex-wrap mt-auto">
+        {isPositive ? (
+          <ArrowUpRight className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+        ) : (
+          <ArrowDownRight className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+        )}
+        <span className={`text-xs font-medium ${isPositive ? 'text-green-600' : 'text-red-600'} truncate`}>
+          {change}
+        </span>
+        <span className="text-xs text-gray-500 whitespace-nowrap">vs tháng trước</span>
       </div>
     </div>
   );
@@ -192,7 +191,7 @@ const DashboardPage = () => {
   const statsCards = [
     {
       title: 'Tổng giá trị kho',
-      value: formatCurrency(stats.totalRevenue),
+      value: formatCurrencyCompact(stats.totalRevenue),
       change: '+12.5%',
       changeType: 'positive',
       icon: DollarSign,
@@ -249,7 +248,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((stat, index) => (
           <div key={index} className={index >= 2 ? 'hidden lg:block' : ''}>
             <StatCard {...stat} />

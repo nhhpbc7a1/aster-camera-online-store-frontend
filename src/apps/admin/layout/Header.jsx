@@ -32,28 +32,24 @@ const Header = ({
     };
   }, []);
   return (
-    <header className={`
-      bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 max-[850px]:px-4
-      transition-all duration-300
-      ${isCollapsed ? 'ml-20' : 'ml-64'}
-      lg:ml-0 max-[850px]:ml-0
-    `}>
+    <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 max-[850px]:px-4 relative z-40">
       {/* Left Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 min-w-0 flex-1 overflow-x-hidden">
+        {/* Mobile Menu Toggle - only show on mobile */}
         <button
           onClick={onToggleSidebar}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors max-[850px]:block min-[851px]:hidden"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         {/* Search */}
-        <div className="relative hidden md:block max-[850px]:block max-[850px]:flex-1">
+        <div className="relative hidden md:block max-[850px]:block max-[850px]:flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 w-80 max-[850px]:w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="pl-10 pr-4 py-2 w-64 lg:w-80 max-[850px]:w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent max-w-full"
           />
         </div>
       </div>
@@ -84,7 +80,7 @@ const Header = ({
         </div>
 
         {/* User Menu */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center gap-2 max-[850px]:gap-1 p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -99,7 +95,7 @@ const Header = ({
 
           {/* Profile Dropdown */}
           {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]">
               <div className="px-4 py-2 border-b border-gray-100">
                 <p className="text-sm font-medium text-gray-900">Admin User</p>
                 <p className="text-xs text-gray-500">admin@hakora.com</p>

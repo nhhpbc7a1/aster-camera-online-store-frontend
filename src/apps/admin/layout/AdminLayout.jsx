@@ -21,7 +21,7 @@ const Layout = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${theme === 'dark' ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 overflow-x-hidden ${theme === 'dark' ? 'dark' : ''}`}>
       <Sidebar 
         isCollapsed={isCollapsed} 
         onToggle={handleToggleSidebar}
@@ -31,8 +31,9 @@ const Layout = () => {
 
       <div className={`
         transition-all duration-300
-        ${isCollapsed ? 'lg:ml-20' : 'lg:ml-64'}
+        ${isCollapsed ? 'min-[851px]:ml-20' : 'min-[851px]:ml-64'}
         max-[850px]:ml-0
+        relative
       `}>
         <Header
           isCollapsed={isCollapsed}
@@ -41,8 +42,10 @@ const Layout = () => {
           onToggleTheme={handleToggleTheme}
         />
 
-        <main className="p-6 max-[850px]:p-4">
-          <Outlet />
+        <main className="p-6 max-[850px]:p-4 w-full overflow-x-hidden">
+          <div className="max-w-[1600px] mx-auto w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

@@ -152,7 +152,7 @@ function AdminCategoryPage() {
       {/* Categories Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden border">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[900px]">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-6 py-3 font-semibold text-sm">
